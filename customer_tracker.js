@@ -47,6 +47,7 @@ $(document).ready(function() {
     var all_customers, all_timesheets, all_totals, all_turnaways;
     firebase.database().ref('customers').on('value', function(snapshot){
       all_customers=snapshot.val();
+      drawManager1Chart();
       console.log(all_customers)
     })
     firebase.database().ref('timesheets').on('value', function(snapshot){
@@ -55,6 +56,7 @@ $(document).ready(function() {
     })
     firebase.database().ref('total').on('value', function(snapshot){
       all_totals=snapshot.val();
+      drawManager2Chart()
       console.log(all_totals)
     })
     firebase.database().ref('turnaways').on('value', function(snapshot){
@@ -288,11 +290,11 @@ $('select').material_select();
 
   //manager screen buttong
   $('#show_manager_button').click(function(){
-    secret_button_count++
-    if(secret_button_count==25){
+
+
       $('#doorperson_screen').toggle(false)
       $('#manager_screen').toggle(true)
-    }
+
   })
 
   $('#return_todoor_button').click(function(){
@@ -584,10 +586,14 @@ $('select').material_select();
     document.getElementById('clockbox').innerHTML=""+nhour+":"+nmin+"";
   }
 
+  function getKeyByValue(object, value) {
+    return Object.keys(object).find(key => object[key] === value);
+  }
 
   //draws chart, callback from chart resource loaded
   function drawChart() {
     console.log(graph_data)
+
     var data = google.visualization.arrayToDataTable(graph_data);
 
     var options = {
@@ -599,12 +605,66 @@ $('select').material_select();
     var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
     chart.draw(data, options);
   }
+
+  function drawManager1Chart() {
+    var customer_table_data=[["Time"]]
+
+    var e = Object.keys(all_customers);
+    for (var i=0; i<e.length; i++) {
+      customer_table_data[0][i+1]=e[i];
+      var u = all_customers[e[i]];
+      for (var x=1; x<all_customers[e[i]].length; x++){
+        if(i==0){
+          customer_table_data.push([all_customers[e[i]][x][0]])
+        }
+
+
+        customer_table_data[x][i+1]=all_customers[e[i]][x][1]
+      }
+
+
+    }
+    customer_table_data=customer_table_data
+     var data = google.visualization.arrayToDataTable(customer_table_data);
+
+    var options = {
+      title: 'Customer Tracking History',
+      hAxis: {title: 'Time',  titleTextStyle: {color: '#333'}},
+      vAxis: {minValue: 0}
+    };
+
+    var chart = new google.visualization.AreaChart(document.getElementById('manager_chart1_div'));
+    chart.draw(data, options);
+  }
+
+  function drawManager2Chart() {
+    var customer_table_data=[["Date", "Total"]]
+
+    var e = Object.keys(all_totals);
+    for (var i=0; i<e.length; i++) {
+      console.log([e[i], all_totals[e[i]]])
+      customer_table_data.push([e[i], parseInt(all_totals[e[i]])])
+
+    }
+    console.log(customer_table_data)
+    customer_table_data=customer_table_data
+     var data = google.visualization.arrayToDataTable(customer_table_data);
+
+    var options = {
+      title: 'Customer Total History',
+      hAxis: {title: 'Time',  titleTextStyle: {color: '#333'}},
+      vAxis: {minValue: 0}
+    };
+
+    var chart = new google.visualization.BarChart(document.getElementById('manager_chart2_div'));
+    chart.draw(data, options);
+  }
 //adjust table data
     function adjustTable(operation){
       var d=new Date();
       var hours=d.getHours();
       var minutes=d.getMinutes();
-      console.log(hours+'' +minutes)
+
 
       //8
       if(hours==8){
