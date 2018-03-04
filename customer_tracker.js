@@ -48,20 +48,20 @@ $(document).ready(function() {
     firebase.database().ref('customers').on('value', function(snapshot){
       all_customers=snapshot.val();
       drawManager1Chart();
-      console.log(all_customers)
+    //  console.log(all_customers)
     })
     firebase.database().ref('timesheets').on('value', function(snapshot){
       all_timesheets=snapshot.val();
-      console.log(all_timesheets)
+    //  console.log(all_timesheets)
     })
     firebase.database().ref('total').on('value', function(snapshot){
       all_totals=snapshot.val();
       drawManager2Chart()
-      console.log(all_totals)
+    //  console.log(all_totals)
     })
     firebase.database().ref('turnaways').on('value', function(snapshot){
       all_turnaways=snapshot.val();
-      console.log(all_turnaways)
+    //  console.log(all_turnaways)
     })
 
   //END VARIABLE SETUPS
@@ -123,6 +123,7 @@ $(document).ready(function() {
     }
   //Table info
     if(localStorage.getItem("8_count")){
+      console.log(localStorage.getItem("8_count"))
       $('#8_count').val(localStorage.getItem("8_count"))
       graph_data[1][1]=parseInt(localStorage.getItem("8_count"))
     }
@@ -187,10 +188,12 @@ $(document).ready(function() {
       graph_data[16][1]=parseInt(localStorage.getItem("1530_count"))
     }
     if(localStorage.getItem("16_count")){
+      console.log(localStorage.getItem("1630_count"))
       $('#16_count').val(localStorage.getItem("16_count"))
       graph_data[17][1]=parseInt(localStorage.getItem("16_count"))
     }
     if(localStorage.getItem("1630_count")){
+      console.log(localStorage.getItem("1630_count"))
       $('#1630_count').val(localStorage.getItem("1630_count"))
       if(isNaN(localStorage.getItem("1630_count"))){
         graph_data[18][1]=0
@@ -264,15 +267,7 @@ $(document).ready(function() {
   $('.collapsible').collapsible();
 $('select').material_select();
   // //BEGIN ONCLICK SETUPS
-  $('#new_employee_button').click(function(){
-    timesheet_list.push({name:'no_name', start: null, break1out:null, break1in: null, lunch: null,break2out:null, break2in:null, end:null, total:0 })
-    saveTimesheetList("timesheet", timesheet_list)
-    var e=$(
-      '<tr><td><input id="timesheet_name_'+timesheet_list.length+'" style="width:100px"type="text" class="validate"></td><td><input id="timesheet_start_'+timesheet_list.length+'" type="text" class="validate"></td><td><input id="timesheet_break1out_'+timesheet_list.length+'" type="text" class="validate"></td><td><input id="timesheet_break1in_'+timesheet_list.length+'" type="text" class="validate"></td><td><input id="timesheet_lunch_'+timesheet_list.length+'" type="text" class="validate"></td><td><input id="timesheet_break2out_'+timesheet_list.length+'" type="text" class="validate"></td><td>  <input id="timesheet_break2in_'+timesheet_list.length+'" type="text" class="validate"></td><td><input id="' +'timesheet_end_'+timesheet_list.length+'" type="text" class="validate"></td><td><input id="' +"timesheet_total_" +timesheet_list.length +'" type="text" class="validate"></td></tr>'
-    )
-    $('#timesheet_table').append(e)
-    location.reload()
-  })
+
   //TODO: add inventory functionality tied to a store map
 
   $('#leaving_customer').click(function(){
@@ -281,67 +276,44 @@ $('select').material_select();
         return 3
       } else {
         return --oldval;
-        console.log('got em')
+        //console.log('got em')
       }
 
     });
     saveSingleNumber("instore_count", $('#instore_number').val())
   })
 
-  //manager screen buttong
-  $('#show_manager_button').click(function(){
-
-
-      $('#doorperson_screen').toggle(false)
-      $('#manager_screen').toggle(true)
-
-  })
-
-  $('#return_todoor_button').click(function(){
-    secret_button_count=0;
-    $('#doorperson_screen').toggle(true)
-    $('#manager_screen').toggle(false)
-  })
-
-  //Set up customer log/turnaway/secret buttons (nav bar buttons)
-  $('#show_customer_button').click(function(){
-    $('#customer_scroll_body').toggle(true);
-    $('#turnaway_scroll_body').toggle(false);
-    $('#timesheet_body').toggle(false);
-  })
-  $('#show_turnaway_button').click(function(){
-    $('#customer_scroll_body').toggle(false);
-    $('#turnaway_scroll_body').toggle(true);
-    $('#timesheet_body').toggle(false);
-  })
-  $('#show_secret_button').click(function(){
-    $('#customer_scroll_body').toggle(false);
-    $('#turnaway_scroll_body').toggle(false);
-    $('#timesheet_body').toggle(true);
+  $('#entering_customer').click(function(){
+    $('#instore_number').val( function(i, oldval) {
+        return ++oldval;
+    });
+    console.log($('#instore_number').val())
+    $('#instore_number').val($('#instore_number').val())
+    saveSingleNumber("instore_count", $('#instore_number').val())
   })
 
   //add customer button
   $('#add_customer').click(function(){
-    if($('#instore_number').val()>15){
-      Materialize.toast("Store At Capacity, Wait Outside!", 5000)
-    } else {
-      $('#customer_number').val( function(i, oldval) {
-        return ++oldval;
-        console.log('got em')
-      });
-      $('#instore_number').val( function(i, oldval) {
-        return ++oldval;
-        console.log('got em')
-      });
-      $('#total_number').val( function(i, oldval) {
-        return ++oldval;
-        console.log('got em')
-      });
-      saveSingleNumber("current_count", $('#customer_number').val())
-      saveSingleNumber("total_count", $('#total_number').val())
-      saveSingleNumber("instore_count", $('#instore_number').val())
-      adjustTable(0)
-    }
+    // if($('#instore_number').val()>15){
+    //   Materialize.toast("Store At Capacity, Wait Outside!", 5000)
+    // } else {
+    //   $('#customer_number').val( function(i, oldval) {
+    //     return ++oldval;
+    //     //console.log('got em')
+    //   });
+      // $('#instore_number').val( function(i, oldval) {
+      //   return ++oldval;
+      //   //console.log('got em')
+      // });
+      // $('#total_number').val( function(i, oldval) {
+      //   return ++oldval;
+      //   //console.log('got em')
+      // });
+      // saveSingleNumber("current_count", $('#customer_number').val())
+      // saveSingleNumber("total_count", $('#total_number').val())
+      // saveSingleNumber("instore_count", $('#instore_number').val())
+      // adjustTable(0)
+    //}
 
   })
 
@@ -349,19 +321,19 @@ $('select').material_select();
   $('#minus_customer').click(function(){
     $('#customer_number').val( function(i, oldval) {
       return --oldval;
-      console.log('got em')
+      // console.log('got em')
     });
     $('#instore_number').val( function(i, oldval) {
       if($('#instore_number').val()==3){
         return 3
       } else {
         return --oldval;
-        console.log('got em')
+        // console.log('got em')
       }
 })
     $('#total_number').val( function(i, oldval) {
       return --oldval;
-      console.log('got em')
+      // console.log('got em')
     });
     saveSingleNumber("current_count", $('#customer_number').val())
     saveSingleNumber("total_count", $('#total_number').val())
@@ -448,22 +420,39 @@ $('select').material_select();
     $('#submit_turnaway').click(function(){
       turnaway_list.push({name:$('#turnaway_name').val(), date:$('#turnaway_date').val(), reason:$('#reason').val()})
       saveTurnawayList("turnaway_list", turnaway_list)
-      console.log(turnaway_list)
+      // console.log(turnaway_list)
       var e = $('<div class="row"><div class="col s3"><p>'+$('#turnaway_name').val()+'</div><div class="col s3"><p>'+$('#turnaway_date').val()+'</div><div class="col s5"><p>'+$('#reason').val()+'</div></div>')
       $('#turnaway_body').append(e)
       $('#total_turnaway_number').val( function(i, oldval) {
         return ++oldval;
-        console.log('got em')
+        // console.log('got em')
       });
       saveSingleNumber("turnaway_count", $('#total_turnaway_number').val() )
+    })
+
+    $('#new_employee_button').click(function(){
+      timesheet_list.push({name:'no_name', start: null, break1out:null, break1in: null, lunch: null,break2out:null, break2in:null, end:null, total:0 })
+      saveTimesheetList("timesheet", timesheet_list)
+      var e=$(
+        '<tr><td><input id="timesheet_name_'+timesheet_list.length+'" style="width:100px"type="text" class="validate"></td><td><input id="timesheet_start_'+timesheet_list.length+'" type="text" class="validate"></td><td><input id="timesheet_break1out_'+timesheet_list.length+'" type="text" class="validate"></td><td><input id="timesheet_break1in_'+timesheet_list.length+'" type="text" class="validate"></td><td><input id="timesheet_lunch_'+timesheet_list.length+'" type="text" class="validate"></td><td><input id="timesheet_break2out_'+timesheet_list.length+'" type="text" class="validate"></td><td>  <input id="timesheet_break2in_'+timesheet_list.length+'" type="text" class="validate"></td><td><input id="' +'timesheet_end_'+timesheet_list.length+'" type="text" class="validate"></td><td><input id="' +"timesheet_total_" +timesheet_list.length +'" type="text" class="validate"></td></tr>'
+      )
+      $('#timesheet_table').append(e)
+      location.reload()
+    })
+
+    $('#save_employee_button').change(function(){
+      for(var i=0;i<timesheet_list.length;i++){
+
+      }
     })
     //END ONCLICK SETUPS
 
     //BEGIN RUNNING LOGIC SETUP
-    //get and adjust clock every second(?)ish
-    GetClock();
-    setInterval(GetClock,1000);
-    //END RUNNING LOGIC SETUP
+
+
+    //BEGIN ON CHANGE SECTION
+
+    //END ON CHANGE SECTION
 
   //BEGIN FUNCTIONS SECTION
 
@@ -545,8 +534,8 @@ $('select').material_select();
       timesheet_list[i].total=$('#timesheet_total_'+i).val()
 
     }
-    console.log(timesheet_list)
-    console.log('lala')
+    // console.log(timesheet_list)
+    // console.log('lala')
     saveTimesheetList("timesheet", timesheet_list)
 
     Materialize.toast('Data saved to browser storage!', 4000)
@@ -569,22 +558,7 @@ $('select').material_select();
           }, 0);
       }
   }
-  //clock handler
-  function GetClock(){
-    var d=new Date();
-    var nhour=d.getHours(),nmin=d.getMinutes();
-    if(nmin<=9) nmin="0"+nmin
-    if(nmin==0 && d.getSeconds()<5){
-      $('#customer_number').val(0)
-      localStorage.setItem("current_count", 0)
-    }
-    if(nmin==30 && d.getSeconds()<5){
-      $('#customer_number').val(0)
-      localStorage.setItem("current_count", 0)
-    }
 
-    document.getElementById('clockbox').innerHTML=""+nhour+":"+nmin+"";
-  }
 
   function getKeyByValue(object, value) {
     return Object.keys(object).find(key => object[key] === value);
@@ -592,7 +566,7 @@ $('select').material_select();
 
   //draws chart, callback from chart resource loaded
   function drawChart() {
-    console.log(graph_data)
+    // console.log(graph_data)
 
     var data = google.visualization.arrayToDataTable(graph_data);
 
@@ -642,11 +616,11 @@ $('select').material_select();
 
     var e = Object.keys(all_totals);
     for (var i=0; i<e.length; i++) {
-      console.log([e[i], all_totals[e[i]]])
+      // console.log([e[i], all_totals[e[i]]])
       customer_table_data.push([e[i], parseInt(all_totals[e[i]])])
 
     }
-    console.log(customer_table_data)
+    // console.log(customer_table_data)
     customer_table_data=customer_table_data
      var data = google.visualization.arrayToDataTable(customer_table_data);
 
@@ -674,7 +648,7 @@ $('select').material_select();
               graph_data[1][1]=parseInt(oldval)+1
               drawChart()
               return ++oldval;
-              console.log('got em')
+              // console.log('got em')
 
             });
           } else {
@@ -682,7 +656,7 @@ $('select').material_select();
               graph_data[1][1]=parseInt(oldval)-1
               drawChart()
               return --oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           }
           saveSingleNumber("8_count", $('#8_count').val())
@@ -693,14 +667,14 @@ $('select').material_select();
               graph_data[2][1]=parseInt(oldval)+1
               drawChart()
               return ++oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           } else {
             $('#830_count').val( function(i, oldval) {
               graph_data[2][1]=parseInt(oldval)-1
               drawChart()
               return --oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           }
           saveSingleNumber("830_count", $('#830_count').val())
@@ -714,14 +688,14 @@ $('select').material_select();
               graph_data[3][1]=parseInt(oldval)+1
               drawChart()
               return ++oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           } else {
             $('#9_count').val( function(i, oldval) {
               graph_data[3][1]=parseInt(oldval)-1
               drawChart()
               return --oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           }
           saveSingleNumber("9_count", $('#9_count').val())
@@ -731,14 +705,14 @@ $('select').material_select();
               graph_data[4][1]=parseInt(oldval)+1
               drawChart()
               return ++oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           } else {
             $('#930_count').val( function(i, oldval) {
               graph_data[4][1]=parseInt(oldval)-1
               drawChart()
               return --oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           }
           saveSingleNumber("930_count", $('#930_count').val())
@@ -752,14 +726,14 @@ $('select').material_select();
               graph_data[5][1]=parseInt(oldval)+1
               drawChart()
               return ++oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           } else {
             $('#10_count').val( function(i, oldval) {
               graph_data[5][1]=parseInt(oldval)-1
               drawChart()
               return --oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           }
           saveSingleNumber("10_count", $('#10_count').val())
@@ -769,14 +743,14 @@ $('select').material_select();
               graph_data[6][1]=parseInt(oldval)+1
               drawChart()
               return ++oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           } else {
             $('#1030_count').val( function(i, oldval) {
               graph_data[6][1]=parseInt(oldval)-1
               drawChart()
               return --oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           }
           saveSingleNumber("1030_count", $('#1030_count').val())
@@ -790,14 +764,14 @@ $('select').material_select();
               graph_data[7][1]=parseInt(oldval)+1
               drawChart()
               return ++oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           } else {
             $('#11_count').val( function(i, oldval) {
               graph_data[7][1]=parseInt(oldval)-1
               drawChart()
               return --oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           }
             saveSingleNumber("11_count", $('#11_count').val())
@@ -807,14 +781,14 @@ $('select').material_select();
               graph_data[8][1]=parseInt(oldval)+1
               drawChart()
               return ++oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           } else {
             $('#1130_count').val( function(i, oldval) {
               graph_data[8][1]=parseInt(oldval)-1
               drawChart()
               return --oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           }
             saveSingleNumber("1130_count", $('#1130_count').val())
@@ -828,14 +802,14 @@ $('select').material_select();
               graph_data[9][1]=parseInt(oldval)+1
               drawChart()
               return ++oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           } else {
             $('#12_count').val( function(i, oldval) {
               graph_data[9][1]=parseInt(oldval)-1
               drawChart()
               return --oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           }
             saveSingleNumber("12_count", $('#12_count').val())
@@ -845,14 +819,14 @@ $('select').material_select();
               graph_data[10][1]=parseInt(oldval)+1
               drawChart()
               return ++oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           } else {
             $('#1230_count').val( function(i, oldval) {
               graph_data[10][1]=parseInt(oldval)-1
               drawChart()
               return --oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           }
             saveSingleNumber("1230_count", $('#1230_count').val())
@@ -866,14 +840,14 @@ $('select').material_select();
               graph_data[11][1]=parseInt(oldval)+1
               drawChart()
               return ++oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           } else {
             $('#13_count').val( function(i, oldval) {
               graph_data[11][1]=parseInt(oldval)-1
               drawChart()
               return --oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           }
             saveSingleNumber("13_count", $('#13_count').val())
@@ -883,14 +857,14 @@ $('select').material_select();
               graph_data[12][1]=parseInt(oldval)+1
               drawChart()
               return ++oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           } else {
             $('#1330_count').val( function(i, oldval) {
               graph_data[12][1]=parseInt(oldval)-1
               drawChart()
               return --oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           }
             saveSingleNumber("1330_count", $('#1330_count').val())
@@ -904,14 +878,14 @@ $('select').material_select();
               graph_data[13][1]=parseInt(oldval)+1
               drawChart()
               return ++oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           } else {
             $('#14_count').val( function(i, oldval) {
               graph_data[13][1]=parseInt(oldval)-1
               drawChart()
               return --oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           }
             saveSingleNumber("14_count", $('#14_count').val())
@@ -921,14 +895,14 @@ $('select').material_select();
               graph_data[14][1]=parseInt(oldval)+1
               drawChart()
               return ++oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           } else {
             $('#1430_count').val( function(i, oldval) {
               graph_data[14][1]=parseInt(oldval)-1
               drawChart()
               return --oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           }
             saveSingleNumber("1430_count", $('#1430_count').val())
@@ -942,14 +916,14 @@ $('select').material_select();
               graph_data[15][1]=parseInt(oldval)+1
               drawChart()
               return ++oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           } else {
             $('#15_count').val( function(i, oldval) {
               graph_data[15][1]=parseInt(oldval)-1
               drawChart()
               return --oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           }
             saveSingleNumber("15_count", $('#15_count').val())
@@ -959,14 +933,14 @@ $('select').material_select();
               graph_data[16][1]=parseInt(oldval)+1
               drawChart()
               return ++oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           } else {
             $('#1530_count').val( function(i, oldval) {
               graph_data[16][1]=parseInt(oldval)-1
               drawChart()
               return --oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           }
             saveSingleNumber("1530_count", $('#1530_count').val())
@@ -980,31 +954,32 @@ $('select').material_select();
               graph_data[17][1]=parseInt(oldval)+1
               drawChart()
               return ++oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           } else {
             $('#16_count').val( function(i, oldval) {
               graph_data[17][1]=parseInt(oldval)-1
               drawChart()
               return --oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           }
             saveSingleNumber("16_count", $('#16_count').val())
         } else {
+          console.log('did it at 1630')
           if(operation==0){
             $('#1630_count').val( function(i, oldval) {
               graph_data[18][1]=parseInt(oldval)+1
               drawChart()
               return ++oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           } else {
             $('#1630_count').val( function(i, oldval) {
               graph_data[18][1]=parseInt(oldval)-1
               drawChart()
               return --oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           }
             saveSingleNumber("1630_count", $('#1630_count').val())
@@ -1018,31 +993,32 @@ $('select').material_select();
               graph_data[19][1]=parseInt(oldval)+1
               drawChart()
               return ++oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           } else {
             $('#17_count').val( function(i, oldval) {
               graph_data[19][1]=parseInt(oldval)-1
               drawChart()
               return --oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           }
             saveSingleNumber("17_count", $('#17_count').val())
         } else {
+          console.log('did it at 1730')
           if(operation==0){
             $('#1730_count').val( function(i, oldval) {
               graph_data[20][1]=parseInt(oldval)+1
               drawChart()
               return ++oldval;
-              console.log('got em')
+              //console.log('got em')
             });
           } else {
             $('#1730_count').val( function(i, oldval) {
               graph_data[20][1]=parseInt(oldval)-1
               drawChart()
               return --oldval;
-              console.log('got em')
+              //console.log('got em')
             });
           }
             saveSingleNumber("1730_count", $('#1730_count').val())
@@ -1056,31 +1032,32 @@ $('select').material_select();
               graph_data[21][1]=parseInt(oldval)+1
               drawChart()
               return ++oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           } else {
             $('#18_count').val( function(i, oldval) {
               graph_data[21][1]=parseInt(oldval)-1
               drawChart()
               return --oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           }
             saveSingleNumber("18_count", $('#18_count').val())
         } else {
+          console.log('did it at 1830')
           if(operation==0){
             $('#1830_count').val( function(i, oldval) {
               graph_data[22][1]=parseInt(oldval)+1
               drawChart()
               return ++oldval;
-              console.log('got em')
+              //console.log('got em')
             });
           } else {
             $('#1830_count').val( function(i, oldval) {
               graph_data[22][1]=parseInt(oldval)-1
               drawChart()
               return --oldval;
-              console.log('got em')
+               //console.log('got em')
             });
           }
             saveSingleNumber("1830_count", $('#1830_count').val())
@@ -1094,14 +1071,14 @@ $('select').material_select();
               graph_data[23][1]=parseInt(oldval)+1
               drawChart()
               return ++oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           } else {
             $('#19_count').val( function(i, oldval) {
               graph_data[23][1]=parseInt(oldval)-1
               drawChart()
               return --oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           }
             saveSingleNumber("19_count", $('#19_count').val())
@@ -1111,14 +1088,14 @@ $('select').material_select();
               graph_data[24][1]=parseInt(oldval)+1
               drawChart()
               return ++oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           } else {
             $('#1930_count').val( function(i, oldval) {
               graph_data[24][1]=parseInt(oldval)-1
               drawChart()
               return --oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           }
             saveSingleNumber("1930_count", $('#1930_count').val())
@@ -1132,14 +1109,14 @@ $('select').material_select();
               graph_data[25][1]=parseInt(oldval)+1
               drawChart()
               return ++oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           } else {
             $('#20_count').val( function(i, oldval) {
               graph_data[25][1]=parseInt(oldval)-1
               drawChart()
               return --oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           }
             saveSingleNumber("20_count", $('#20_count').val())
@@ -1149,14 +1126,14 @@ $('select').material_select();
               graph_data[26][1]=parseInt(oldval)+1
               drawChart()
               return ++oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           } else {
             $('#2030_count').val( function(i, oldval) {
               graph_data[26][1]=parseInt(oldval)-1
               drawChart()
               return --oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           }
             saveSingleNumber("2030_count", $('#2030_count').val())
@@ -1170,14 +1147,14 @@ $('select').material_select();
               graph_data[27][1]=parseInt(oldval)+1
               drawChart()
               return ++oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           } else {
             $('#21_count').val( function(i, oldval) {
               graph_data[27][1]=parseInt(oldval)-1
               drawChart()
               return --oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           }
             saveSingleNumber("21_count", $('#21_count').val())
@@ -1187,14 +1164,14 @@ $('select').material_select();
               graph_data[28][1]=parseInt(oldval)+1
               drawChart()
               return ++oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           } else {
             $('#2130_count').val( function(i, oldval) {
               graph_data[28][1]=parseInt(oldval)-1
               drawChart()
               return --oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           }
             saveSingleNumber("2130_count", $('#2130_count').val())
@@ -1208,14 +1185,14 @@ $('select').material_select();
               graph_data[29][1]=parseInt(oldval)+1
               drawChart()
               return ++oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           } else {
             $('#22_count').val( function(i, oldval) {
               graph_data[29][1]=parseInt(oldval)-1
               drawChart()
               return --oldval;
-              console.log('got em')
+            //  console.log('got em')
             });
           }
             saveSingleNumber("22_count", $('#22_count').val())
@@ -1225,14 +1202,14 @@ $('select').material_select();
               graph_data[30][1]=parseInt(oldval)+1
               drawChart()
               return ++oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           } else {
             $('#2230_count').val( function(i, oldval) {
               graph_data[30][1]=parseInt(oldval)-1
               drawChart()
               return --oldval;
-              console.log('got em')
+              // console.log('got em')
             });
           }
             saveSingleNumber("2230_count", $('#2230_count').val())
