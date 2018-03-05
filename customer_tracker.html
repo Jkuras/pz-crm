@@ -19,7 +19,7 @@
    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
    <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
   <script type="text/javascript" src="materialize/js/materialize.min.js"></script>
-  <script type="text/javascript" src="customer_tracker.js"></script>
+  <!-- <script type="text/javascript" src="customer_tracker.js"></script> -->
   <script type="text/javascript" src="ctrl_customer_tracker.js"></script>
   <div id='doorperson_screen'>
   <header style='background-color:#ef9a9a; color:white'>
@@ -53,13 +53,13 @@
     </div>
     <div class="row" style="padding-bottom:15px">
     <div class="col center s4" >
-      <a id="quicksave_button" class="waves-effect waves-light green lighten-2 btn">Save</a>
+      <a id="save_button" class="waves-effect waves-light green lighten-2 btn">Save</a>
     </div>
     <div class="col center s4" >
       <a  class="waves-effect waves-light red lighten-2 btn modal-trigger" href="#modal2">Clear</a>
     </div>
     <div id="save_total" class="col center s4">
-      <a id='save_button' class="waves-effect waves-light green lighten-2 btn">Print</a>
+      <a id='print_button' class="waves-effect waves-light green lighten-2 btn">Print</a>
     </div>
   </div>
 
@@ -90,7 +90,6 @@
     <div id="customer_scroll_body" class="row">
       <div id="customer_count_row" class="row center valign-wrapper">
         <div id="minus_customer" class="left col s3 m3 l3">
-
           <a class="btn-floating btn-small waves-effect waves-light red"><i class="material-icons">cancel</i></a>
         </div>
 
@@ -125,13 +124,13 @@
             <div id="add_customer" class="col s12" style="padding-bottom:25px">
               <a class="btn-floating btn-small waves-effect waves-light green"><i class="material-icons">arrow_upward</i></a>
             </div>
-            <div id="leaving_customer" class="col s12">
+            <div class="col s12">
               <div class="row">
                 <div class="col left s6">
-                  <a id="leaving_customer" class="btn-flat btn-small waves-effect waves-red"><i class="material-icons">arrow_downward</i></a>
+                  <a id="leaving_customer" class="btn-flat btn-small waves-effect waves-red" style="width:15px"><i class="material-icons">arrow_downward</i></a>
                 </div>
                 <div class="col right s6">
-                  <a id="entering_customer" class="btn-flat btn-small waves-effect waves-green"><i class="material-icons">arrow_upward</i></a>
+                  <a id="entering_customer" class="btn-flat btn-small waves-effect waves-green" style="width:15px"><i class="material-icons">arrow_upward</i></a>
                 </div>
               </div>
             </div>
@@ -270,16 +269,25 @@
                   <input id="turnaway_name" type="text" class="validate">
                   <label for="turnaway_name">Name</label>
                 </div>
-                <div class="input-field col s6">
-                  <input id="turnaway_date" type="text" class="validate">
-                  <label for="turnaway_date">Time</label>
+                <div class="center col s6" style="padding-top: 25px">
+                  <div id="clockbox2"></div>
+
                 </div>
               </div>
 
               <div class="row">
                 <div class="input-field col s12">
-                  <input id="reason" type="text" class="validate">
-                  <label for="reason">Reason</label>
+                  <div class="input-field col s12">
+                    <select id="turnaway_reason">
+                      <option value="none" disabled selected>Choose your option</option>
+                      <option value="1">No ID</option>
+                      <option value="2">Expired ID</option>
+                      <option value="3">Fake ID</option>
+                      <option value="4">Underage</option>
+                      <option value="5">Other</option>
+                    </select>
+                    <label>Reason</label>
+                  </div>
                 </div>
               </div>
             </form>
@@ -312,23 +320,42 @@
         </div>
       </div>
 
+      <div id="modal3" class="modal" >
+        <div class="modal-content">
+          <h6>Enter Employee Name</h6>
+        </div>
+        <div class="row">
+          <div class="input-field col s10 offset-s1">
+            <div class="input-field col s6">
+              <input id="timesheet_name" type="text" class="validate">
+              <label for="timesheet_name">Name</label>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a href="#!" id="new_timesheet_button"class="modal-action modal-close waves-effect waves-green btn-flat">Add Employee</a>
+          <a href="#!" class="modal-action modal-close waves-effect waves-red btn-flat">Cancel</a>
+        </div>
+      </div>
+
 
     <div id='turnaway_scroll_body'style="height:250px;overflow-y:scroll; display:none" class="row">
 
       <div id="turnaway_body" class="row">
+        <table>
+          <thead>
+            <tr>
+                <th>Name</th>
+                <th>Time</th>
+                <th>Reason</th>
+            </tr>
+          </thead>
 
-        <div class="row">
-          <div class="col s3">
-            <p>name
-          </div>
-          <div class="col s3">
-            <p>time
-          </div>
-          <div class="col s5">
-            <p>reason
-          </div>
+          <tbody id="turnaway_table_body">
 
-        </div>
+          </tbody>
+        </table>
+
       </div>
     </div>
 <div id="timesheet_body" style="display:none">
@@ -341,7 +368,8 @@
               <th>Start</th>
               <th>Break 1 out</th>
               <th>Break 1 in</th>
-              <th>Lunch</th>
+              <th>Lunch Out</th>
+              <th>Lunch In</th>
               <th>Break 2 out</th>
               <th>Break 2 in</th>
               <th>End</th>
@@ -351,17 +379,14 @@
 
         <tbody id="timesheet_table">
 
-
         </tbody>
       </table>
     </div>
     <div class="row">
-      <div class="col center s6" style="padding-bottom:15px">
-        <a id='new_employee_button' class="waves-effect waves-light green lighten-2 btn">Add Employee</a>
+      <div class="col center s12" style="padding-bottom:15px">
+        <a id='new_employee_button' class="waves-effect waves-light green lighten-2 btn modal-trigger" href="#modal3">Add Employee</a>
       </div>
-      <div class="col center s6" style="padding-bottom:15px">
-        <a id='save_employee_button' class="waves-effect waves-light purple lighten-2 btn">Save Times</a>
-      </div>
+
     </div>
 
 
