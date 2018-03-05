@@ -54,22 +54,11 @@ $(document).ready(function(){
   var current_half_number
   var fresh_load=0
 
-  var todays_total
-  var todays_tracking
-  var todays_turnaways
-  var todays_timesheets
 
   var ptr_in_store_number="in_store_number"
-  var ptr_todays_total="todays_total"
-  var ptr_current_half_number="current_half_number"
 
-  var ptr_todays_tracking="todays_tracking"
-  var ptr_todays_turnaways="todays_turnaways"
-  var ptr_todays_timesheets="todays_timesheets"
 
-  var ptr_all_customers="all_customers"
-  var ptr_all_timesheets="all_timesheets"
-  var ptr_all_turnaways="all_turnaways"
+
 
   var all_customers, all_timesheets, all_totals, all_turnaways;
   getDataBaseInfo(true, true, true)
@@ -157,14 +146,14 @@ $(document).ready(function(){
   })
 
   $('#leaving_customer').click(function(){
-    console.log('leaving customer')
+
     in_store_number=parseInt(in_store_number)-1
     saveSingleToLocalStorage(ptr_in_store_number, in_store_number)
     $('#in_store_number').val(in_store_number)
   })
 
   $('#entering_customer').click(function(){
-    console.log('entering customer')
+
     in_store_number=parseInt(in_store_number)+1
     saveSingleToLocalStorage(ptr_in_store_number, in_store_number)
     $('#in_store_number').val(in_store_number)
@@ -201,7 +190,7 @@ $(document).ready(function(){
     all_timesheets[date][name]=new Timesheet(name)
     var refString="timesheets/" + date
     saveToDataBase(refString, all_timesheets[date])
-    console.log("added")
+
   })
 
   ////////////////////////////////////////////////////
@@ -239,7 +228,7 @@ $(document).ready(function(){
         if(!all_customers[date]){
           //make a new tracking sheet and save it to the db
           all_customers[date]=new Tracker()
-          database.ref('customers/'+date).set(all_customers[date]).then(console.log('saveeed'))
+          database.ref('customers/'+date).set(all_customers[date])
         }
         //on data change, write proper values to UI
         updateUI()
@@ -261,7 +250,7 @@ $(document).ready(function(){
   }
 
   function saveToDataBase(ref, data){
-    database.ref(ref).set(data).then(console.log('saved to db'))
+    database.ref(ref).set(data)
   }
 
   function saveAllToDataBase() {
@@ -357,7 +346,7 @@ $(document).ready(function(){
   }
 
   function updateUI(){
-    console.log(all_turnaways)
+
 
     if(all_customers) {
       $('#current_half_number').val(all_customers[date][getTime()])
@@ -376,14 +365,14 @@ $(document).ready(function(){
 
     if(all_timesheets) {
       if ( all_timesheets[date] ) {
-        console.log(all_timesheets[date])
+
         var keys = Object.keys(all_timesheets[date])
         for (var i = 0; i < keys.length ; i++){
           var e=$(
             '<tr><td><input id="name_'+i+'" type="text"></input></td><td><input id="start_' +i +'" type="text" class="timepicker"></td><td><input id="break1out_'+i+'" type="text" class="timepicker"></td><td><input id="break1in_'+i+'" type="text" class="timepicker"></td><td><input id="lunchout_'+i+'" type="text" class="timepicker"></td><td><input id="lunchin_'+i+'"  type="text" class="timepicker"></td><td><input id="break2out_'+i+'" type="text" class="timepicker"></td><td><input id="break2in_'+i+'" type="text" class="timepicker"></td><td><input id="end_'+i+'" type="text" class="timepicker"></td><td id="total_'+i+'">0</td></tr>'
           )
           $('#timesheet_table').append(e)
-          console.log(all_timesheets[date][keys[i]].name)
+        
           $('#name_'+i).val(all_timesheets[date][keys[i]].name)
           $('#start_'+i).val(all_timesheets[date][keys[i]].start)
           $('#break1out_'+i).val(all_timesheets[date][keys[i]].break_1_out)
