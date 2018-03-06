@@ -51,17 +51,12 @@ $(document).ready(function(){
   var date = new Date().toJSON().slice(0,10)
 
   var in_store_number
-  var current_half_number
-  var fresh_load=0
-
-
   var ptr_in_store_number="in_store_number"
 
-
-
-
   var all_customers, all_timesheets, all_totals, all_turnaways;
-  getDataBaseInfo(true, true, true)
+  $('#date').val(date)
+  $('#21on_date').val(getTwentyOneOnDate())
+  getDataBaseInfo(true, true, true, true)
   loadAllFromLocalStorage()
   getClock();
   halfHourCheck();
@@ -118,8 +113,8 @@ $(document).ready(function(){
 
     in_store_number=parseInt(in_store_number)+1
     saveSingleToLocalStorage(ptr_in_store_number, in_store_number)
-
-    all_customers[date][getTime()]=all_customers[date][getTime()]+1
+    console.log(getTime())
+    all_customers[date][getTime()]=parseInt(all_customers[date][getTime()])+1
     var refString="customers/" + date + "/" + getTime()
     saveToDataBase(refString, all_customers[date][getTime()])
     refString="total/" + date
@@ -173,6 +168,9 @@ $(document).ready(function(){
     } else if($('#turnaway_reason').val()==5){
       reason = "Other"
     }
+    if(!all_turnaways){
+      all_turnaways={}
+    }
     if (!all_turnaways[date]){
       all_turnaways[date]=[]
     }
@@ -186,11 +184,50 @@ $(document).ready(function(){
       all_timesheets={}
       all_timesheets[date]={}
     }
+    if ( !all_timesheets[date]) {
+      all_timesheets[date] = {}
+    }
     var name = $("#timesheet_name").val()
     all_timesheets[date][name]=new Timesheet(name)
     var refString="timesheets/" + date
     saveToDataBase(refString, all_timesheets[date])
 
+  })
+
+  $("#save_employee_button").click(function(){
+    var keys = Object.keys(all_timesheets[date])
+    for (var i = 0; i < keys.length ; i++){
+        all_timesheets[date][keys[i]].name=$('#name_'+i).val()
+        all_timesheets[date][keys[i]].start=$('#start_'+i).val()
+        all_timesheets[date][keys[i]].break_1_out=$('#break1out_'+i).val()
+        all_timesheets[date][keys[i]].break_1_in=$('#break1in_'+i).val()
+        all_timesheets[date][keys[i]].lunch_out=$('#lunchout_'+i).val()
+        all_timesheets[date][keys[i]].lunch_in=$('#lunchin_'+i).val()
+        all_timesheets[date][keys[i]].break_2_out=$('#break2out_'+i).val()
+        all_timesheets[date][keys[i]].break_2_in=$('#break2in_'+i).val()
+        all_timesheets[date][keys[i]].out=$('#end_'+i).val()
+        //When they enter a start and end time, calculate the total
+        if($('#start_'+i).val()!='00:00' && $('#end_'+i).val()!='00:00') {
+          var start=$('#start_'+i).val()
+          var end=$('#end_'+i).val()
+          var lunch=false
+          //if they took a lunch set it to true
+          if($('#lunchout_'+i).val()!='00:00') {
+            lunch=true
+          }
+          //get total time
+          var total_time=getTotalTime(start, end, lunch)
+          all_timesheets[date][keys[i]].total=total_time
+        }
+        //until they enter a end and start time, total hours is 0
+        else {
+          all_timesheets[date][keys[i]].total=0
+        }
+
+      }
+      var refString="timesheets/"+date
+      saveToDataBase(refString, all_timesheets[date])
+      updateUI(false, true, false)
   })
 
   ////////////////////////////////////////////////////
@@ -219,7 +256,7 @@ $(document).ready(function(){
     localStorage.clear()
   }
 
-  function getDataBaseInfo(customers, timesheets, turnaways){
+  function getDataBaseInfo(customers, timesheets, turnaways, totals){
     if(customers){
       firebase.database().ref('customers').on('value', function(snapshot){
         //pull all customers
@@ -231,20 +268,28 @@ $(document).ready(function(){
           database.ref('customers/'+date).set(all_customers[date])
         }
         //on data change, write proper values to UI
-        updateUI()
+        updateUI(true, false, false, false)
       })
     }
     if(timesheets){
       firebase.database().ref('timesheets').on('value', function(snapshot){
         all_timesheets=snapshot.val();
         //Materialize.toast('Timesheet History Loaded!', 2000)
+        updateUI(false, true, false, false)
       })
     }
     if(turnaways){
       firebase.database().ref('turnaways').on('value', function(snapshot){
         all_turnaways=snapshot.val();
         //Materialize.toast('Turnaway History Loaded!', 2000)
-        updateUI()
+        updateUI(false, false, true, false)
+      })
+    }
+    if(totals){
+      firebase.database().ref('total').on('value', function(snapshot){
+        all_totals=snapshot.val()
+        console.log(all_totals)
+        updateUI(false, false, false, true)
       })
     }
   }
@@ -323,9 +368,50 @@ $(document).ready(function(){
     chart.draw(data, options);
   }
 
+  function drawCustomerTrackingHistoryChart(){
+    var keys = Object.keys(all_customers)
+    var graph_data = [["Time"]]
+    for(var i = 0; i<keys.length;i++){
+      console.log(keys[i])
+      graph_data[0][i+1]=keys[i]
+      var daily_keys = Object.keys(all_customers[keys[i]])
+      for (var h = 0;h<daily_keys.length; h++) {
+        console.log(all_customers[keys[i]][daily_keys[h]])
+        graph_data[h+1]=[daily_keys[h]]
+        graph_data[h+1][i+1]=all_customers[keys[i]][daily_keys[h]]
+      }
+
+    }
+    console.log(graph_data)
+  }
+
+  function drawDailyTotalHistoryChart(){
+    var keys = Object.keys(all_totals)
+    var graph_data = [["Date", "Total"]]
+    for (var i = 0; i <keys.length; i++){
+      graph_data.push([keys[i], all_totals[keys[i]]])
+    }
+    var data = google.visualization.arrayToDataTable(graph_data);
+
+   var options = {
+     title: 'Customer Tracking History',
+     hAxis: {title: 'Time',  titleTextStyle: {color: '#333'}},
+     vAxis: {minValue: 0}
+   };
+
+   var chart = new google.visualization.BarChart(document.getElementById('manager_chart1_div'));
+   chart.draw(data, options);
+  }
+
   function getTime(){
     var mdate=new Date()
-    var e = mdate.getHours() + ":"
+    var e = ""
+    if (mdate.getHours()<10){
+      e="0" + mdate.getHours() + ":"
+    }
+    else {
+      e=e+mdate.getHours() + ":"
+    }
     if (mdate.getMinutes()<30){
       e=e + "00"
     }
@@ -333,6 +419,73 @@ $(document).ready(function(){
       e=e+"30"
     }
     return e
+  }
+
+  function getTotalTime(start, end, lunch){
+    start_hours=start.split(":")[0]
+    start_minutes=start.split(":")[1]
+    end_hours=end.split(":")[0]
+    end_minutes=end.split(":")[1]
+    var total_hours=end_hours-start_hours
+    var total_minutes=end_minutes-start_minutes
+    if (lunch){
+      total_minutes=total_minutes-30
+    }
+    //minutes between 0 and 9
+    if (total_minutes>=0 && total_minutes<=9) {
+      total_minutes='00'
+    }
+    //minutes between 10 and 22
+    else if (total_minutes>=10 && total_minutes<=22) {
+      total_minutes='25'
+    }
+    //minutes between 23 and 37
+    else if (total_minutes>=23 && total_minutes<=37) {
+      total_minutes='50'
+    }
+    //minutes between 38 and 52
+    else if (total_minutes>=38 && total_minutes<=52) {
+      total_minutes='50'
+    }
+    //round hours UP
+    else if (total_minutes>=52 && total_minutes<=59) {
+      total_minutes='00'
+      total_hours++
+    }
+
+    else if (total_minutes<=-1 && total_minutes>=-8){
+      total_minutes='00'
+    }
+    else if (total_minutes<=-9 && total_minutes>=-22){
+      total_minutes='75'
+      total_hours--
+    }
+    else if (total_minutes<=-23 && total_minutes>=-37){
+      total_minutes='50'
+      total_hours--
+    }
+    else if (total_minutes<=-38 && total_minutes>=-52){
+      total_minutes='25'
+      total_hours--
+    }
+    else if (total_minutes<=-53 && total_minutes>=-59){
+      total_minutes='00'
+      total_hours--
+    }
+    return total_hours+"."+total_minutes
+  }
+
+  function getTwentyOneOnDate(){
+    var e = new Date()
+    console.log(e)
+    var o = e.getFullYear()-21+"-"
+    if(parseInt(e.getMonth()+1)<10) {
+      o = o +'0'+parseInt(e.getMonth()+1) +'-'
+    }
+    if(e.getDate()<10){
+      o = o+"0"+e.getDate()
+    }
+    return o;
   }
 
   function getDailyTotal(edate){
@@ -345,17 +498,18 @@ $(document).ready(function(){
     return e
   }
 
-  function updateUI(){
+  function updateUI(customers, timesheets, turnaways, totals){
 
 
-    if(all_customers) {
+    if(all_customers && customers) {
       $('#current_half_number').val(all_customers[date][getTime()])
       $('#todays_total').val(getDailyTotal(date))
       drawTodaysTrackingChart()
     }
 
-    if(all_turnaways){
+    if(all_turnaways && turnaways){
       if ( all_turnaways[date] ) {
+        $('#turnaway_table_body').empty()
         for (var i = 0; i<all_turnaways[date].length; i++){
           var e = $('<tr><td>' + all_turnaways[date][i].name + '</td><td>' + all_turnaways[date][i].time + '</td><td>' + all_turnaways[date][i].reason + '</td></tr>')
           $('#turnaway_table_body').append(e)
@@ -363,42 +517,64 @@ $(document).ready(function(){
       }
     }
 
-    if(all_timesheets) {
+    if(all_timesheets && timesheets) {
       if ( all_timesheets[date] ) {
-
+        $('#timesheet_table').empty()
         var keys = Object.keys(all_timesheets[date])
         for (var i = 0; i < keys.length ; i++){
-          var e=$(
-            '<tr><td><input id="name_'+i+'" type="text"></input></td><td><input id="start_' +i +'" type="text" class="timepicker"></td><td><input id="break1out_'+i+'" type="text" class="timepicker"></td><td><input id="break1in_'+i+'" type="text" class="timepicker"></td><td><input id="lunchout_'+i+'" type="text" class="timepicker"></td><td><input id="lunchin_'+i+'"  type="text" class="timepicker"></td><td><input id="break2out_'+i+'" type="text" class="timepicker"></td><td><input id="break2in_'+i+'" type="text" class="timepicker"></td><td><input id="end_'+i+'" type="text" class="timepicker"></td><td id="total_'+i+'">0</td></tr>'
-          )
-          $('#timesheet_table').append(e)
-        
-          $('#name_'+i).val(all_timesheets[date][keys[i]].name)
-          $('#start_'+i).val(all_timesheets[date][keys[i]].start)
-          $('#break1out_'+i).val(all_timesheets[date][keys[i]].break_1_out)
-          $('#break1in_'+i).val(all_timesheets[date][keys[i]].break_1_in)
-          $('#lunchout_'+i).val(all_timesheets[date][keys[i]].lunch_out)
-          $('#lunchin_'+i).val(all_timesheets[date][keys[i]].lunch_in)
-          $('#break2out_'+i).val(all_timesheets[date][keys[i]].break_2_out)
-          $('#break2in_'+i).val(all_timesheets[date][keys[i]].break_2_in)
-          $('#end_'+i).val(all_timesheets[date][keys[i]].out)
-          $('#total_'+i).val(all_timesheets[date][keys[i]].total)
-        }
+
+            var e=$(
+              '<tr><td><input id="name_'+i+'" type="text"></input></td><td><input id="start_' +i +'" type="text" class="timepicker"></td><td><input id="break1out_'+i+'" type="text" class="timepicker"></td><td><input id="break1in_'+i+'" type="text" class="timepicker"></td><td><input id="lunchout_'+i+'" type="text" class="timepicker"></td><td><input id="lunchin_'+i+'"  type="text" class="timepicker"></td><td><input id="break2out_'+i+'" type="text" class="timepicker"></td><td><input id="break2in_'+i+'" type="text" class="timepicker"></td><td><input id="end_'+i+'" type="text" class="timepicker"></td><td><input  id="total_'+i+'"type="text"></input></td></tr>'
+            )
+            $('#timesheet_table').append(e)
+
+            $('#name_'+i).val(all_timesheets[date][keys[i]].name)
+            $('#start_'+i).val(all_timesheets[date][keys[i]].start)
+            $('#break1out_'+i).val(all_timesheets[date][keys[i]].break_1_out)
+            $('#break1in_'+i).val(all_timesheets[date][keys[i]].break_1_in)
+            $('#lunchout_'+i).val(all_timesheets[date][keys[i]].lunch_out)
+            $('#lunchin_'+i).val(all_timesheets[date][keys[i]].lunch_in)
+            $('#break2out_'+i).val(all_timesheets[date][keys[i]].break_2_out)
+            $('#break2in_'+i).val(all_timesheets[date][keys[i]].break_2_in)
+            $('#end_'+i).val(all_timesheets[date][keys[i]].out)
+            $('#total_'+i).val(all_timesheets[date][keys[i]].total)
+
+          }
+
         $('.timepicker').pickatime({
           default: 'now', // Set default time: 'now', '1:30AM', '16:30'
           fromnow: 0,       // set default time to * milliseconds from now (using with default = 'now')
           twelvehour: false, // Use AM/PM or 24-hour format
           donetext: 'OK', // text for done-button
           cleartext: 'Clear', // text for clear-button
-          canceltext: 'Cancel', // Text for cancel-button
           autoclose: false, // automatic close timepicker
           ampmclickable: true, // make AM PM clickable
-          aftershow: function(){} //Function for after opening timepicker
+          aftershow: function(){
+            console.log('lalal')
+          } //Function for after opening timepicker
         });
       }
     }
-
+    if(all_totals && totals) {
+      drawDailyTotalHistoryChart()
+    }
   }
+
+  //create trigger to resizeEnd event
+  $(window).resize(function() {
+    if(this.resizeTO) clearTimeout(this.resizeTO);
+    this.resizeTO = setTimeout(function() {
+        $(this).trigger('resizeEnd');
+    }, 500);
+  });
+
+  //redraw graph when window resize is completed
+  $(window).on('resizeEnd', function() {
+    drawTodaysTrackingChart();
+    drawDailyTotalHistoryChart()
+    drawCustomerTrackingHistoryChart()
+  });
+
 
     //Materialize initialization
     $('#modal1').modal();

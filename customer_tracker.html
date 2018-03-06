@@ -18,16 +18,17 @@
   <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
    <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
-  <script type="text/javascript" src="materialize/js/materialize.min.js"></script>
+  <script type="text/javascript" src="materialize/js/materialize.js"></script>
   <!-- <script type="text/javascript" src="customer_tracker.js"></script> -->
   <script type="text/javascript" src="ctrl_customer_tracker.js"></script>
-  <div id='doorperson_screen'>
+
   <header style='background-color:#ef9a9a; color:white'>
     <div class='row'>
       <div class='center col s12 m12 l12'>
-            <p>Multi-Purpose Door Tool</p>
+        <p>Hi Welcome To The Pot Zone</p>
+                    <div id="clockbox"></div>
       </div>
-      <div class='col left s6 m6 l6'>
+      <!-- <div class='col left s6 m6 l6'>
         <div class='row'>
           <div class='col left s6 m6 l6'>
             <p>Names of Door People
@@ -48,94 +49,90 @@
           </div>
         </div>
 
+      </div> -->
+
       </div>
 
+    <div class="row" >
+      <div class="col s4" style='background-color:yellow'></div>
+      <div class="col s4" style='background-color:red'></div>
+      <div class="col s4" style='background-color:green'></div>
     </div>
-    <div class="row" style="padding-bottom:15px">
-    <div class="col center s4" >
-      <a id="save_button" class="waves-effect waves-light green lighten-2 btn">Save</a>
-    </div>
-    <div class="col center s4" >
-      <a  class="waves-effect waves-light red lighten-2 btn modal-trigger" href="#modal2">Clear</a>
-    </div>
-    <div id="save_total" class="col center s4">
-      <a id='print_button' class="waves-effect waves-light green lighten-2 btn">Print</a>
-    </div>
-  </div>
-
-  </header>
-
-  <main>
     <div class="row">
       <div class='col s3 center'>
-        <a id="show_customer_button"class="waves-effect waves-red btn-flat">Customer Log</a>
+        <a id="show_customer_button"class="waves-effect waves-red btn-flat white-text">Customer Log</a>
       </div>
       <div class='col s3 center'>
-        <a id="show_turnaway_button" class="waves-effect waves-green btn-flat">Turn-Aways</a>
+        <a id="show_turnaway_button" class="waves-effect waves-green btn-flat white-text">Turn-Aways</a>
       </div>
       <div class='col s3 center'>
-        <a id="show_timesheet_button"class="waves-effect waves-yellow btn-flat">Time-Sheet</a>
+        <a id="show_timesheet_button"class="waves-effect waves-yellow btn-flat white-text">Time-Sheet</a>
       </div>
       <div class='col s3 center'>
-        <a id="show_manager_button"class="waves-effect waves-black btn-flat">Admin Page</a>
+        <a id="show_manager_button"class="waves-effect waves-black btn-flat white-text">Admin Page</a>
       </div>
-
     </div>
     <div class="row" >
       <div class="col s4" style='background-color:red'></div>
       <div class="col s4" style='background-color:green'></div>
       <div class="col s4" style='background-color:yellow'></div>
     </div>
+  </header>
+
+  <main>
+
 
     <div id="customer_scroll_body" class="row">
       <div id="customer_count_row" class="row center valign-wrapper">
-        <div id="minus_customer" class="left col s3 m3 l3">
-          <a class="btn-floating btn-small waves-effect waves-light red"><i class="material-icons">cancel</i></a>
-        </div>
-
-        <div id="customer_count" class="center col s6 m6 l6 valign-wrapper">
-          <div id="text_portion" class="row  valign-wrapper">
-            <div id="filler" class="col left s6 m6 l6">
-              <div id="clockbox"></div>
-            </div>
-            <div id="counter" class="col right s6 m6 l6  valign-wrapper">
-              <div class="row" style="padding-top:20px">
-                <div class="col s12">
-                  <label>Total Count</label>
-                  <input id="current_half_number" type="number" value="0">
-
-                </div>
-                <div class="col s12">
-                  <label>In Store Limit: 16</label>
-                  <input id="in_store_number" type="number" value="3" min="0">
-
-                </div>
-
-
-              </div>
-
-            </div>
-          </div>
-        </div>
-
-        <div  class="right col s3 m3 l3 center valign-wrapper">
-
+        <div class="col s3">
           <div class="row">
-            <div id="add_customer" class="col s12" style="padding-bottom:25px">
-              <a class="btn-floating btn-small waves-effect waves-light green"><i class="material-icons">arrow_upward</i></a>
+
+
+            <label>21 On..</label>
+            <input class="col s12 center" type='text' id='21on_date'>
+
+            <div>
+            <label>Today's Total</label>
+            <input class="col s12 center" id="todays_total" type="number" value="0">
+          </div>
+          </div>
+
+
+        </div>
+        <div class="col s9">
+          <div class="row">
+            <div class="col s6">
+              <label>Half-Hour Count</label>
+              <input id="current_half_number" type="number" value="0">
             </div>
-            <div class="col s12">
-              <div class="row">
-                <div class="col left s6">
-                  <a id="leaving_customer" class="btn-flat btn-small waves-effect waves-red" style="width:15px"><i class="material-icons">arrow_downward</i></a>
-                </div>
-                <div class="col right s6">
-                  <a id="entering_customer" class="btn-flat btn-small waves-effect waves-green" style="width:15px"><i class="material-icons">arrow_upward</i></a>
-                </div>
-              </div>
+            <div class="col s3">
+
+                <a  id="minus_customer" class="btn-floating btn-small waves-effect waves-light red"><i class="material-icons">cancel</i></a>
+
+            </div>
+            <div class="col s3">
+
+                <a id="add_customer" class="btn-floating btn-small waves-effect waves-light green"><i class="material-icons">arrow_upward</i></a>
+
+            </div>
+          </div>
+          <div class="row">
+            <div class="col s6">
+              <label>In Store Limit: 16</label>
+              <input id="in_store_number" type="number" value="3" min="0">
+            </div>
+            <div class="col s3">
+                <a id="leaving_customer" class="btn-flat btn-small waves-effect waves-red" style="width:15px"><i class="material-icons">arrow_downward</i></a>
+            </div>
+            <div class="col s3">
+              <a id="entering_customer" class="btn-flat btn-small waves-effect waves-green" style="width:15px"><i class="material-icons">arrow_upward</i></a>
             </div>
           </div>
         </div>
+
+
+
+
 
 
       </div>
@@ -145,111 +142,7 @@
         </div>
       </div>
 
-      <div class="row">
-        <ul class="collapsible" data-collapsible="accordion">
-          <li>
-            <div class="collapsible-header"><i class="material-icons">filter_drama</i>Customer Count Numbers</div>
-            <div class="collapsible-body">
-              <div class="row">
-                <table class="striped">
-                 <thead>
-                   <tr>
-                       <th>Time</th>
-                       <th>Count</th>
-                       <th>Time</th>
-                       <th>Count</th>
-                       <th>Time</th>
-                       <th>Count</th>
-                       <th>Time</th>
-                       <th>Count</th>
-                   </tr>
-                 </thead>
 
-                 <tbody>
-                   <tr>
-                     <td>8:00</td>
-                     <td ><input id="8_count" type="number" value="0"></td>
-                     <td>12:00</td>
-                     <td ><input id="12_count" type="number" value="0"></td>
-                     <td>16:00</td>
-                     <td ><input id="16_count" type="number" value="0"></td>
-                     <td>20:00</td>
-                     <td><input id="20_count" type="number" value="0"></td>
-                   </tr>
-                   <tr>
-                     <td>8:30</td>
-                     <td ><input id="830_count" type="number" value="0"></td>
-                     <td>12:30</td>
-                     <td ><input id="1230_count" type="number" value="0"></td>
-                     <td>16:30</td>
-                     <td ><input id="1630_count" type="number" value="0"></td>
-                     <td>20:30</td>
-                     <td><input id="2030_count" type="number" value="0"></td>
-                   </tr>
-                   <tr>
-                     <td>9:00</td>
-                     <td ><input id="9_count" type="number" value="0"></td>
-                     <td>13:00</td>
-                     <td ><input id="13_count" type="number" value="0"></td>
-                     <td>17:00</td>
-                     <td ><input id="17_count" type="number" value="0"></td>
-                     <td>21:00</td>
-                     <td><input id="21_count" type="number" value="0"></td>
-                   </tr>
-                   <tr>
-                     <td>9:30</td>
-                     <td ><input id="930_count" type="number" value="0"></td>
-                     <td>13:30</td>
-                     <td ><input id="1330_count" type="number" value="0"></td>
-                     <td>17:30</td>
-                     <td ><input id="1730_count" type="number" value="0"></td>
-                     <td>21:30</td>
-                     <td><input id="2130_count" type="number" value="0"></td>
-                   </tr>
-                   <tr>
-                     <td>10:00</td>
-                     <td ><input id="10_count" type="number" value="0"></td>
-                     <td>14:00</td>
-                     <td ><input id="14_count" type="number" value="0"></td>
-                     <td>18:00</td>
-                     <td ><input id="18_count" type="number" value="0"></td>
-                     <td>22:00</td>
-                     <td><input id="22_count" type="number" value="0"></td>
-                   </tr>
-                   <tr>
-                     <td>10:30</td>
-                     <td ><input id="1030_count" type="number" value="0"></td>
-                     <td>14:30</td>
-                     <td ><input id="1430_count" type="number" value="0"></td>
-                     <td>18:30</td>
-                     <td ><input id="1830_count" type="number" value="0"></td>
-                     <td>22:30</td>
-                     <td><input id="2230_count" type="number" value="0"></td>
-                   </tr>
-                   <tr>
-                     <td>11:00</td>
-                     <td ><input id="11_count" type="number" value="0"></td>
-                     <td>15:00</td>
-                     <td ><input id="15_count" type="number" value="0"></td>
-                     <td>19:00</td>
-                     <td ><input id="19_count" type="number" value="0"></td>
-                   </tr>
-                   <tr>
-                     <td>11:30</td>
-                     <td ><input id="1130_count" type="number" value="0"></td>
-                     <td>15:30</td>
-                     <td ><input id="1530_count" type="number" value="0"></td>
-                     <td>19:30</td>
-                     <td ><input id="1930_count" type="number" value="0"></td>
-                   </tr>
-                 </tbody>
-               </table>
-              </div>
-            </div>
-          </li>
-        </ul>
-
-      </div>
     </div>
 
 
@@ -383,8 +276,11 @@
       </table>
     </div>
     <div class="row">
-      <div class="col center s12" style="padding-bottom:15px">
+      <div class="col left center s6" style="padding-bottom:15px">
         <a id='new_employee_button' class="waves-effect waves-light green lighten-2 btn modal-trigger" href="#modal3">Add Employee</a>
+      </div>
+      <div class="col right center s6" style="padding-bottom:15px">
+        <a id='save_employee_button' class="waves-effect waves-light green lighten-2 btn" >Save Timesheet</a>
       </div>
 
     </div>
@@ -394,44 +290,38 @@
 
 <div id="admin_body"class="row" style="display:none">
 
-    <div style="width: 100%; height: 300px;" id="manager_chart1_div"></div>
+  <ul class="collapsible" data-collapsible="accordion">
+    <li>
+      <div class="collapsible-header"><i class="material-icons">accessibility</i>Customer Tracking</div>
+      <div class="collapsible-body">
+        <div style="width: 100%; height: 300px;" id="manager_chart1_div"></div>
+        <div style="width: 100%; height: 300px;" id="manager_chart2_div"></div>
+      </div>
+    </li>
+    <li>
+      <div class="collapsible-header"><i class="material-icons">airplanemode_inactive</i>Turnaways</div>
+      <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
+    </li>
+    <li>
+      <div class="collapsible-header"><i class="material-icons">alarm_on</i>Timesheets</div>
+      <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
+    </li>
+  </ul>
 
 
-    <div style="width: 100%; height: 300px;" id="manager_chart2_div"></div>
 
 </div>
   </main>
 
-    <footer class="page-footer" style="padding-bottom:10px">
-      <div id="total_count" class="row">
-        <div class="col s5">
-          <div class="row">
-            <div id="total_text" class="col s12">
-              <p>Total Customers</p>
-            </div>
-            <div id="count_text" class="col s12">
-              <input id="todays_total" type="number" value="0">
-            </div>
-          </div>
+    <footer class="page-footer center" style="padding-bottom:10px">
+      <div class="footer-copyright">
+        <div class="container">
+          This product was made exclusively by Jesse Kuras utilizing Materialize, JQuery, Firebase, and Google Charts, for The Pot Zone.
+          Please contact Jesse at j.l.kuras95@gmail.com with questions, comments, concerns, and suggestions, or to inquire about contracting your own website or productivity application.
         </div>
-
-        <div class="col s5">
-          <div class="row">
-            <div id="total_turnaway_text" class="col s12">
-              <p>Total Turnaways</p>
-            </div>
-            <div id="count_turnaway_text" class="col s12">
-              <input id="total_turnaway_number" type="number" value="0">
-            </div>
-          </div>
-        </div>
-
-
-
-
       </div>
     </footer>
-  </div>
+
 
 
 
