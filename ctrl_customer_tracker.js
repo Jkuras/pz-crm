@@ -352,7 +352,8 @@ $(document).ready(function(){
     var options = {
       title: 'Customer Log',
       hAxis: {title: 'Time',  titleTextStyle: {color: '#333'}},
-      vAxis: {minValue: 0}
+      vAxis: {minValue: 0},
+      legend: {position: 'none'}
     };
 
     var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
@@ -407,9 +408,10 @@ $(document).ready(function(){
     var data = google.visualization.arrayToDataTable(graph_data);
 
    var options = {
-     title: 'Customer Tracking History',
+     title: 'Daily Total History',
      hAxis: {title: 'Time',  titleTextStyle: {color: '#333'}},
-     vAxis: {minValue: 0}
+     vAxis: {minValue: 0},
+     legend: {position: 'none'}
    };
 
    var chart = new google.visualization.BarChart(document.getElementById('manager_chart1_div'));
