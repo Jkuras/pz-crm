@@ -71,15 +71,6 @@ $(document).ready(function(){
   ////////////////////////////////////////////////////
   //START ONCLICK SETUPS//////////////////////////////
   ////////////////////////////////////////////////////
-  $('#clear_button').click(function(){
-    clearStorage()
-    location.reload();
-    Materialize.toast('Local Storage Cleared!', 4000)
-  })
-
-  $('#save_button').click(function(){
-    saveAllToDataBase()
-  })
 
   $('#show_manager_button').click(function(){
     $('#customer_scroll_body').toggle(false);
@@ -372,24 +363,46 @@ $(document).ready(function(){
     var keys = Object.keys(all_customers)
     var graph_data = [["Time"]]
     for(var i = 0; i<keys.length;i++){
-      console.log(keys[i])
       graph_data[0][i+1]=keys[i]
       var daily_keys = Object.keys(all_customers[keys[i]])
       for (var h = 0;h<daily_keys.length; h++) {
-        console.log(all_customers[keys[i]][daily_keys[h]])
-        graph_data[h+1]=[daily_keys[h]]
+
+        if(!graph_data[h+1]) {
+          graph_data[h+1]=[]
+        }
+        if (!graph_data[h+1][i+1]){
+          graph_data[h+1][i+1]=0
+        }
+        graph_data[h+1][0]=daily_keys[h]
         graph_data[h+1][i+1]=all_customers[keys[i]][daily_keys[h]]
       }
-
+      console.log(graph_data)
     }
-    console.log(graph_data)
+    var data = google.visualization.arrayToDataTable(graph_data);
+
+    var options = {
+      title: 'Customer Tracking History',
+      hAxis: {title: 'Date',  titleTextStyle: {color: '#333'}},
+      vAxis: {minValue: 0}
+    };
+
+    var chart = new google.visualization.AreaChart(document.getElementById('manager_chart2_div'));
+    chart.draw(data, options);
   }
 
   function drawDailyTotalHistoryChart(){
     var keys = Object.keys(all_totals)
-    var graph_data = [["Date", "Total"]]
+    var graph_data = [["Date", "Total", {role: 'style'}]]
     for (var i = 0; i <keys.length; i++){
-      graph_data.push([keys[i], all_totals[keys[i]]])
+      var color = ''
+      if (i==0){
+        color='blue'
+      } else if (i==1){
+        color='red'
+      } else if (i==2){
+        color='yellow'
+      }
+      graph_data.push([keys[i], all_totals[keys[i]], color])
     }
     var data = google.visualization.arrayToDataTable(graph_data);
 
