@@ -1,7 +1,7 @@
 
 
 $(document).ready(function(){
-  console.log(getTodaysDate())
+
   var config = {
     apiKey: "AIzaSyC00TPfdhQDZ-lqMtgJa9g82sfLjAJ3-g8",
     authDomain: "potzone-crm.firebaseapp.com",
@@ -128,7 +128,6 @@ $(document).ready(function(){
 
     in_store_number=parseInt(in_store_number)+1
     saveSingleToLocalStorage(ptr_in_store_number, in_store_number)
-    console.log(getTime())
     all_customers[getTodaysDate()][getTime()]=parseInt(all_customers[getTodaysDate()][getTime()])+1
     var refString="customers/" + getTodaysDate() + "/" + getTime()
     saveToDataBase(refString, all_customers[getTodaysDate()][getTime()])
@@ -212,22 +211,22 @@ $(document).ready(function(){
   $("#save_employee_button").click(function(){
     var keys = Object.keys(all_timesheets[getTodaysDate()])
     for (var i = 0; i < keys.length ; i++){
-        all_timesheets[getTodaysDate()][keys[i]].name=$('#name_'+i).val()
-        all_timesheets[getTodaysDate()][keys[i]].start=$('#start_'+i).val()
-        all_timesheets[getTodaysDate()][keys[i]].break_1_out=$('#break1out_'+i).val()
-        all_timesheets[getTodaysDate()][keys[i]].break_1_in=$('#break1in_'+i).val()
-        all_timesheets[getTodaysDate()][keys[i]].lunch_out=$('#lunchout_'+i).val()
-        all_timesheets[getTodaysDate()][keys[i]].lunch_in=$('#lunchin_'+i).val()
-        all_timesheets[getTodaysDate()][keys[i]].break_2_out=$('#break2out_'+i).val()
-        all_timesheets[getTodaysDate()][keys[i]].break_2_in=$('#break2in_'+i).val()
-        all_timesheets[getTodaysDate()][keys[i]].out=$('#end_'+i).val()
+        all_timesheets[getTodaysDate()][keys[i]].name=$('#ename_'+i).val()
+        all_timesheets[getTodaysDate()][keys[i]].start=$('#estart_'+i).val()
+        all_timesheets[getTodaysDate()][keys[i]].break_1_out=$('#ebreak1out_'+i).val()
+        all_timesheets[getTodaysDate()][keys[i]].break_1_in=$('#ebreak1in_'+i).val()
+        all_timesheets[getTodaysDate()][keys[i]].lunch_out=$('#elunchout_'+i).val()
+        all_timesheets[getTodaysDate()][keys[i]].lunch_in=$('#elunchin_'+i).val()
+        all_timesheets[getTodaysDate()][keys[i]].break_2_out=$('#ebreak2out_'+i).val()
+        all_timesheets[getTodaysDate()][keys[i]].break_2_in=$('#ebreak2in_'+i).val()
+        all_timesheets[getTodaysDate()][keys[i]].out=$('#eend_'+i).val()
         //When they enter a start and end time, calculate the total
-        if($('#start_'+i).val()!='00:00' && $('#end_'+i).val()!='00:00') {
-          var start=$('#start_'+i).val()
-          var end=$('#end_'+i).val()
+        if($('#estart_'+i).val()!='00:00' && $('#eend_'+i).val()!='00:00') {
+          var start=$('#estart_'+i).val()
+          var end=$('#eend_'+i).val()
           var lunch=false
           //if they took a lunch set it to true
-          if($('#lunchout_'+i).val()!='00:00') {
+          if($('#elunchout_'+i).val()!='00:00') {
             lunch=true
           }
           //get total time
@@ -374,7 +373,7 @@ $(document).ready(function(){
     if(totals){
       firebase.database().ref('total').on('value', function(snapshot){
         all_totals=snapshot.val()
-        console.log(all_totals)
+
         updateUI(false, false, false, true)
       })
     }
