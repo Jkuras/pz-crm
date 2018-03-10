@@ -283,7 +283,85 @@
     </li>
     <li>
       <div class="collapsible-header"><i class="material-icons">alarm_on</i>Timesheets</div>
-      <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
+      <div class="collapsible-body">
+        <div class="row">
+          <div class="col s6 center">
+            <a id="by_person_timesheets"class="waves-effect waves-red btn-flat"><i class="material-icons left">accessibility</i>By Person</a>
+          </div>
+          <div class="col s6 center">
+            <a id="by_date_timesheets"class="waves-effect waves-green btn-flat"><i class="material-icons left">alarm_on</i>By Date</a>
+          </div>
+        </div>
+        <div id="show_person_timesheets"class="row">
+          <label>Choose Employee:</label>
+          <select id="select_employee">
+            <option value="none" disabled selected>Pick Employee</option>
+            <option class="employee_select" value="1">Craig</option>
+            <option class="employee_select" value="2">Mallory</option>
+            <option class="employee_select" value="3">Austin</option>
+            <option class="employee_select" value="4">James</option>
+            <option class="employee_select" value="5">Marcus</option>
+            <option class="employee_select" value="6">Cathy</option>
+            <option class="employee_select" value="7">Danae</option>
+            <option class="employee_select" value="8">Kory</option>
+            <option class="employee_select" value="9">Jesse</option>
+          </select>
+
+          <div class="col s2 offset-s10">
+            <a id="load_timesheet"style="align:right"class="waves-effect waves-green btn-flat">Load</a>
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                  <th>Date</th>
+                  <th>Start</th>
+                  <th>Break 1 out</th>
+                  <th>Break 1 in</th>
+                  <th>Lunch Out</th>
+                  <th>Lunch In</th>
+                  <th>Break 2 out</th>
+                  <th>Break 2 in</th>
+                  <th>End</th>
+                  <th>Total</th>
+              </tr>
+            </thead>
+
+            <tbody id="by_person_table">
+
+            </tbody>
+          </table>
+
+        </div>
+        <div id="show_date_timesheets"class="row" style="display:none">
+          <label>Select Date</label>
+          <input id="pick_timesheet_date" type="text" class="datepicker"></input>
+          <div class="col s2 offset-s10">
+            <a id="load_timesheet_2"style="align:right"class="waves-effect waves-green btn-flat">Load</a>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                  <th>Name</th>
+                  <th>Start</th>
+                  <th>Break 1 out</th>
+                  <th>Break 1 in</th>
+                  <th>Lunch Out</th>
+                  <th>Lunch In</th>
+                  <th>Break 2 out</th>
+                  <th>Break 2 in</th>
+                  <th>End</th>
+                  <th>Total</th>
+              </tr>
+            </thead>
+
+            <tbody id="by_date_table">
+
+            </tbody>
+          </table>
+
+        </div>
+      </div>
     </li>
   </ul>
 
