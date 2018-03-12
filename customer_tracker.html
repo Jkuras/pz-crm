@@ -1,135 +1,64 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!--Import materialize.css-->
+    <link type="text/css" rel="stylesheet" href="materialize/css/materialize.css"  media="screen,projection"/>
 
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  </head>
+  <body>
+    <!--Import jQuery before materialize.js-->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
+    <script type="text/javascript" src="materialize/js/materialize.js"></script>
+    <script type="text/javascript" src="ctrl_customer_tracker.js"></script>
 
-  <!--Import Google Icon Font-->
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <!--Import materialize.css-->
-  <link type="text/css" rel="stylesheet" href="materialize/css/materialize.css"  media="screen,projection"/>
-
-
-  <!--Let browser know website is optimized for mobile-->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-</head>
-
-<body>
-  <!--Import jQuery before materialize.js-->
-  <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-   <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
-  <script type="text/javascript" src="materialize/js/materialize.js"></script>
-  <!-- <script type="text/javascript" src="customer_tracker.js"></script> -->
-  <script type="text/javascript" src="ctrl_customer_tracker.js"></script>
-
-  <header style='background-color:#ef9a9a; color:white'>
-    <div class='row'>
-      <div class='center col s12 m12 l12'>
-        <p>Hi Welcome To The Pot Zone</p>
-                    <div id="clockbox"></div>
-      </div>
-
-
-      </div>
-
-    <div class="row" >
-      <div class="col s4" style='background-color:yellow'></div>
-      <div class="col s4" style='background-color:red'></div>
-      <div class="col s4" style='background-color:green'></div>
-    </div>
-    <div class="row">
-      <div class='col s3 center'>
-        <a id="show_customer_button"class="waves-effect waves-red btn-flat white-text">Customer Log</a>
-      </div>
-      <div class='col s3 center'>
-        <a id="show_turnaway_button" class="waves-effect waves-green btn-flat white-text">Turn-Aways</a>
-      </div>
-      <div class='col s3 center'>
-        <a id="show_timesheet_button"class="waves-effect waves-yellow btn-flat white-text">Time-Sheet</a>
-      </div>
-      <div class='col s3 center'>
-        <a id="show_manager_button"class="waves-effect waves-black btn-flat white-text">Admin Page</a>
-      </div>
-    </div>
-    <div class="row" >
-      <div class="col s4" style='background-color:red'></div>
-      <div class="col s4" style='background-color:green'></div>
-      <div class="col s4" style='background-color:yellow'></div>
-    </div>
-  </header>
-
-  <main>
-
-
-    <div id="customer_scroll_body" class="row">
-      <div id="customer_count_row" class="row center valign-wrapper">
-        <div class="col s3">
-          <div class="row">
-
-
-            <label>21 On..</label>
-            <input class="col s12 center" type='text' id='21on_date'>
-
-            <div>
-            <label>Today's Total</label>
-            <input class="col s12 center" id="todays_total" type="number" value="0">
-          </div>
-          </div>
-
-
-        </div>
-        <div class="col s9">
-          <div class="row">
-            <div class="col s6">
-              <label>Half-Hour Count</label>
-              <input id="current_half_number" type="number" value="0">
-            </div>
-            <div class="col s3" style="padding-top:15px">
-
-                <a  id="minus_customer" class="btn-floating btn-small waves-effect waves-light red"><i class="material-icons">cancel</i></a>
-
-            </div>
-            <div class="col s3"  style="padding-top:15px">
-
-                <a id="add_customer" class="btn-floating btn-small waves-effect waves-light green"><i class="material-icons">arrow_upward</i></a>
-
-            </div>
-          </div>
-          <div class="row">
-            <div class="col s6">
-              <label>In Store Limit: 16</label>
-              <input id="in_store_number" type="number" value="3" min="0">
-            </div>
-            <div class="col s3"   style="padding-top:15px">
-                <a id="leaving_customer" class="btn-flat btn-small waves-effect waves-red" ><i class="material-icons">arrow_downward</i></a>
-            </div>
-            <div class="col s3"  style="padding-top:15px">
-              <a id="entering_customer" class="btn-flat btn-small waves-effect waves-green" ><i class="material-icons">arrow_upward</i></a>
-            </div>
-          </div>
+    <header style='background-color:#ef9a9a; color:white'>
+      <div class='row'>
+        <div class='center col s12 m12 l12'>
+          <p>Hi Welcome To The Pot Zone</p>
+                      <div id="clockbox"></div>
         </div>
 
 
+        </div>
 
-
-
-
+      <div class="row" >
+        <div class="col s4" style='background-color:yellow'></div>
+        <div class="col s4" style='background-color:red'></div>
+        <div class="col s4" style='background-color:green'></div>
       </div>
       <div class="row">
-        <div class="col s12">
-          <div style="width: 100%; height:300px;" id="chart_div"></div>
+        <div class='col s3 center'>
+          <a id="show_customer_button"class="waves-effect waves-red btn-flat white-text">Customer Log</a>
+        </div>
+        <div class='col s3 center'>
+          <a id="show_turnaway_button" class="waves-effect waves-green btn-flat white-text">Turn-Aways</a>
+        </div>
+        <div class='col s3 center'>
+          <a id="show_timesheet_button"class="waves-effect waves-yellow btn-flat white-text">Time-Sheet</a>
+        </div>
+        <div class='col s3 center'>
+          <a id="show_manager_button"class="waves-effect waves-black btn-flat white-text">Admin Page</a>
         </div>
       </div>
+      <div class="row" >
+        <div class="col s4" style='background-color:red'></div>
+        <div class="col s4" style='background-color:green'></div>
+        <div class="col s4" style='background-color:yellow'></div>
+      </div>
+    </header>
 
-
-    </div>
-
-
-    <div class="fixed-action-btn">
-      <a id="turnaway_button"class="btn-floating btn-large red modal-trigger" href="#modal1">
-        <i class="large material-icons">airplanemode_inactive</i>
-      </a>
-    </div>
+    <main>
+      <div class="fixed-action-btn">
+        <a id="turnaway_button"class="btn-floating btn-large red modal-trigger" href="#modal1">
+          <i class="large material-icons">airplanemode_inactive</i>
+        </a>
+      </div>
 
       <div id="modal1" class="modal">
         <div class="modal-content">
@@ -171,204 +100,273 @@
         </div>
       </div>
 
-      <div id="modal2" class="modal" >
-        <div class="modal-content">
-          <h6>Are you SURE you want to clear saved data?</h6>
-        </div>
-        <div style="height:250px" class="row">
-          <div class="input-field col s10 offset-s1">
-            <select multiple>
-              <option value="" disabled selected>select options.. </option>
-              <option value="1">Customer Count</option>
-              <option value="2">Turnaways</option>
-              <option value="3">Timesheets</option>
-            </select>
-            <label>Select What to Clear</label>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <a href="#!" id="clear_button"class="modal-action modal-close waves-effect waves-green btn-flat">Yes, clear data</a>
-          <a href="#!" class="modal-action modal-close waves-effect waves-red btn-flat">No, close window</a>
-        </div>
-      </div>
+      <div id="customer_scroll_body" class="row">
+        <div id="customer_count_row" class="row center valign-wrapper">
+          <div class="col s3">
+            <div class="row">
 
-      <div id="modal3" class="modal" >
-        <div class="modal-content">
-          <h6>Enter Employee Name</h6>
-        </div>
-        <div class="row">
-          <div class="input-field col s10 offset-s1">
-            <div class="input-field col s6">
-              <input id="timesheet_name" type="text" class="validate">
-              <label for="timesheet_name">Name</label>
+
+              <label>21 On..</label>
+              <input class="col s12 center" type='text' id='21on_date'>
+
+              <div>
+              <label>Today's Total</label>
+              <input class="col s12 center" id="todays_total" type="number" value="0">
+            </div>
+            </div>
+
+
+          </div>
+          <div class="col s9">
+            <div class="row">
+              <div class="col s6">
+                <label>Half-Hour Count</label>
+                <input id="current_half_number" type="number" value="0">
+              </div>
+              <div class="col s3" style="padding-top:15px">
+
+                  <a  id="minus_customer" class="btn-floating btn-small waves-effect waves-light red"><i class="material-icons">cancel</i></a>
+
+              </div>
+              <div class="col s3"  style="padding-top:15px">
+
+                  <a id="add_customer" class="btn-floating btn-small waves-effect waves-light green"><i class="material-icons">arrow_upward</i></a>
+
+              </div>
+            </div>
+            <div class="row">
+              <div class="col s6">
+                <label>In Store Limit: 16</label>
+                <input id="in_store_number" type="number" value="3" min="0">
+              </div>
+              <div class="col s3"   style="padding-top:15px">
+                  <a id="leaving_customer" class="btn-flat btn-small waves-effect waves-red" ><i class="material-icons">arrow_downward</i></a>
+              </div>
+              <div class="col s3"  style="padding-top:15px">
+                <a id="entering_customer" class="btn-flat btn-small waves-effect waves-green" ><i class="material-icons">arrow_upward</i></a>
+              </div>
             </div>
           </div>
+
+
+
+
+
+
         </div>
-        <div class="modal-footer">
-          <a href="#!" id="new_timesheet_button"class="modal-action modal-close waves-effect waves-green btn-flat">Add Employee</a>
-          <a href="#!" class="modal-action modal-close waves-effect waves-red btn-flat">Cancel</a>
-        </div>
-      </div>
-
-
-    <div id='turnaway_scroll_body'style=" display:none" class="row">
-
-      <div id="turnaway_body" class="row">
-        <table>
-          <thead>
-            <tr>
-                <th>Name</th>
-                <th>Time</th>
-                <th>Reason</th>
-            </tr>
-          </thead>
-
-          <tbody id="turnaway_table_body">
-
-          </tbody>
-        </table>
-
-      </div>
-    </div>
-<div id="timesheet_body" style="display:none">
-    <div id="timesheet_scroll_body" class="row" style="overflow-x:scroll;">
-
-      <table>
-        <thead>
-          <tr>
-              <th>Name</th>
-              <th>Start</th>
-              <th>Break 1 out</th>
-              <th>Break 1 in</th>
-              <th>Lunch Out</th>
-              <th>Lunch In</th>
-              <th>Break 2 out</th>
-              <th>Break 2 in</th>
-              <th>End</th>
-              <th>Total</th>
-          </tr>
-        </thead>
-
-        <tbody id="timesheet_table">
-
-        </tbody>
-      </table>
-    </div>
-    <div class="row">
-      <div class="col left center s6" style="padding-bottom:15px">
-        <a id='new_employee_button' class="waves-effect waves-light green lighten-2 btn modal-trigger" href="#modal3">Add Employee</a>
-      </div>
-      <div class="col right center s6" style="padding-bottom:15px">
-        <a id='save_employee_button' class="waves-effect waves-light green lighten-2 btn" >Save Timesheet</a>
-      </div>
-
-    </div>
-
-
-</div>
-
-<div id="admin_body"class="row" style="display:none">
-
-  <ul class="collapsible" data-collapsible="accordion">
-    <li>
-      <div class="collapsible-header"><i class="material-icons">accessibility</i>Customer Tracking</div>
-      <div class="collapsible-body">
-        <div style="width: 100%; height: 300px;" id="manager_chart1_div"></div>
-        <div style="width: 100%; height: 300px;" id="manager_chart2_div"></div>
-      </div>
-    </li>
-    <li>
-      <div class="collapsible-header"><i class="material-icons">airplanemode_inactive</i>Turnaways</div>
-      <div class="collapsible-body"><span>Lorem ipsum dolor sit amet.</span></div>
-    </li>
-    <li>
-      <div class="collapsible-header"><i class="material-icons">alarm_on</i>Timesheets</div>
-      <div class="collapsible-body">
         <div class="row">
-          <div class="col s6 center">
-            <a id="by_person_timesheets"class="waves-effect waves-red btn-flat"><i class="material-icons left">accessibility</i>By Person</a>
-          </div>
-          <div class="col s6 center">
-            <a id="by_date_timesheets"class="waves-effect waves-green btn-flat"><i class="material-icons left">alarm_on</i>By Date</a>
+          <div class="col s12">
+            <div style="width: 100%; height:300px;" id="chart_div"></div>
           </div>
         </div>
-        <div id="show_person_timesheets"class="row">
-          <label>Choose Employee:</label>
-          <select id="select_employee">
-            <option value="none" disabled selected>Pick Employee</option>
-            <option class="employee_select" value="1">Craig</option>
-            <option class="employee_select" value="2">Mallory</option>
-            <option class="employee_select" value="3">Austin</option>
-            <option class="employee_select" value="4">James</option>
-            <option class="employee_select" value="5">Marcus</option>
-            <option class="employee_select" value="6">Cathy</option>
-            <option class="employee_select" value="7">Danae</option>
-            <option class="employee_select" value="8">Kory</option>
-            <option class="employee_select" value="9">Jesse</option>
-          </select>
 
-          <div class="col s2 offset-s10">
-            <a id="load_timesheet"style="align:right"class="waves-effect waves-green btn-flat">Load</a>
-          </div>
 
-          <table>
-            <thead>
-              <tr>
-                  <th>Date</th>
-                  <th>Start</th>
-                  <th>Break 1 out</th>
-                  <th>Break 1 in</th>
-                  <th>Lunch Out</th>
-                  <th>Lunch In</th>
-                  <th>Break 2 out</th>
-                  <th>Break 2 in</th>
-                  <th>End</th>
-                  <th>Total</th>
-              </tr>
-            </thead>
+      </div>
 
-            <tbody id="by_person_table">
+      <div id='turnaway_scroll_body'style=" display:none" class="row">
 
-            </tbody>
-          </table>
-
-        </div>
-        <div id="show_date_timesheets"class="row" style="display:none">
-          <label>Select Date</label>
-          <input id="pick_timesheet_date" type="text" class="datepicker"></input>
-          <div class="col s2 offset-s10">
-            <a id="load_timesheet_2"style="align:right"class="waves-effect waves-green btn-flat">Load</a>
-          </div>
+        <div id="turnaway_body" class="row">
           <table>
             <thead>
               <tr>
                   <th>Name</th>
-                  <th>Start</th>
-                  <th>Break 1 out</th>
-                  <th>Break 1 in</th>
-                  <th>Lunch Out</th>
-                  <th>Lunch In</th>
-                  <th>Break 2 out</th>
-                  <th>Break 2 in</th>
-                  <th>End</th>
-                  <th>Total</th>
+                  <th>Time</th>
+                  <th>Reason</th>
               </tr>
             </thead>
 
-            <tbody id="by_date_table">
+            <tbody id="turnaway_table_body">
 
             </tbody>
           </table>
 
         </div>
       </div>
-    </li>
-  </ul>
+
+      <div id="timesheet_body" style="display:none">
+          <div id="timesheet_scroll_body" class="row" style="overflow-x:scroll;">
+
+            <table>
+              <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Start</th>
+                    <th>Break 1 out</th>
+                    <th>Break 1 in</th>
+                    <th>Lunch Out</th>
+                    <th>Lunch In</th>
+                    <th>Break 2 out</th>
+                    <th>Break 2 in</th>
+                    <th>End</th>
+                    <th>Total</th>
+                </tr>
+              </thead>
+
+              <tbody id="timesheet_table">
+
+              </tbody>
+            </table>
+          </div>
+          <div class="row">
+            <div class="col left center s6" style="padding-bottom:15px">
+              <a id='new_employee_button' class="waves-effect waves-light green lighten-2 btn modal-trigger" href="#modal3">Add Employee</a>
+            </div>
+            <div class="col right center s6" style="padding-bottom:15px">
+              <a id='save_employee_button' class="waves-effect waves-light green lighten-2 btn" >Save Timesheet</a>
+            </div>
+
+            <div id="modal3" class="modal" >
+              <div class="modal-content">
+                <h6>Enter Employee Name</h6>
+              </div>
+              <div class="row">
+                <div class="input-field col s10 offset-s1">
+                  <div class="input-field col s6">
+                    <input id="timesheet_name" type="text" class="validate">
+                    <label for="timesheet_name">Name</label>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <a href="#!" id="new_timesheet_button"class="modal-action modal-close waves-effect waves-green btn-flat">Add Employee</a>
+                <a href="#!" class="modal-action modal-close waves-effect waves-red btn-flat">Cancel</a>
+              </div>
+            </div>
+
+          </div>
+
+
+      </div>
+
+      <div id="admin_body"class="row" style="display:none">
+        <div class="row" style="padding-top:15px">
+          <div class="col s1">
+            <a id="admin_customer_tracking_button"class="btn-floating btn-small" style="background-color: #4CAF50">
+              <i class="large material-icons">accessibility</i>
+            </a>
+          </div>
+          <div class="col s1">
+            <a id="admin_turnaway_button"class="btn-floating btn-small" style="background-color: #F44336">
+              <i class="large material-icons">airplanemode_inactive</i>
+            </a>
+          </div>
+          <div class="col s1">
+            <a id="admin_timesheet_button"class="btn-floating btn-small" style="background-color: #F44336">
+              <i class="large material-icons">alarm_on</i>
+            </a>
+          </div>
+        </div>
+
+        <div id="admin_customer_body" class="row">
+          <div class="row">
+            <div class="col s12">
+              <div style="width: 100%; height: 300px;" id="manager_chart1_div"></div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col s12">
+              <div style="width: 100%; height: 300px;" id="manager_chart2_div"></div>
+            </div>
+          </div>
+
+
+          </div>
+
+          <div id="admin_turnaway_body" style="display:none" class="row">
+          </div>
+
+          <div id="admin_timesheet_body" style="display:none" class="row">
+            <div class="row">
+              <div class="col s6 center">
+                <a id="by_person_timesheets"class="waves-effect waves-red btn-flat"><i class="material-icons left">accessibility</i>By Person</a>
+              </div>
+              <div class="col s6 center">
+                <a id="by_date_timesheets"class="waves-effect waves-green btn-flat"><i class="material-icons left">alarm_on</i>By Date</a>
+              </div>
+            </div>
+            <div id="show_person_timesheets"class="row">
+              <label>Choose Employee:</label>
+              <select id="select_employee">
+                <option value="none" disabled selected>Pick Employee</option>
+                <option class="employee_select" value="1">Craig</option>
+                <option class="employee_select" value="2">Mallory</option>
+                <option class="employee_select" value="3">Austin</option>
+                <option class="employee_select" value="4">James</option>
+                <option class="employee_select" value="5">Marcus</option>
+                <option class="employee_select" value="6">Cathy</option>
+                <option class="employee_select" value="7">Danae</option>
+                <option class="employee_select" value="8">Kory</option>
+                <option class="employee_select" value="9">Jesse</option>
+              </select>
+
+              <div class="col s2 offset-s10">
+                <a id="load_timesheet"style="align:right"class="waves-effect waves-green btn-flat">Load</a>
+              </div>
+              <div>
+              <table>
+                <thead>
+                  <tr>
+                      <th>Date</th>
+                      <th>Start</th>
+                      <th>Break 1 out</th>
+                      <th>Break 1 in</th>
+                      <th>Lunch Out</th>
+                      <th>Lunch In</th>
+                      <th>Break 2 out</th>
+                      <th>Break 2 in</th>
+                      <th>End</th>
+                      <th>Total</th>
+                  </tr>
+                </thead>
+
+                <tbody id="by_person_table">
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+            <div id="show_date_timesheets"class="row" style="display:none">
+              <label>Select Date:</label>
+              <input id="pick_timesheet_date" type="text" class="datepicker"</input>
+
+              <div class="col s2 offset-s10">
+                <a id="load_timesheet2"style="align:right"class="waves-effect waves-green btn-flat">Load</a>
+              </div>
+              <div>
+                <table>
+                  <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Start</th>
+                        <th>Break 1 out</th>
+                        <th>Break 1 in</th>
+                        <th>Lunch Out</th>
+                        <th>Lunch In</th>
+                        <th>Break 2 out</th>
+                        <th>Break 2 in</th>
+                        <th>End</th>
+                        <th>Total</th>
+                    </tr>
+                  </thead>
+
+                  <tbody id="by_date_table">
+
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+
+        </div>
+      </div>
 
 
 
-</div>
-  </main>
+
+
+
+    </main>
 
     <footer class="page-footer center" style="padding-bottom:10px">
       <div class="footer-copyright">
@@ -378,9 +376,6 @@
         </div>
       </div>
     </footer>
-
-
-
 
   </body>
 </html>

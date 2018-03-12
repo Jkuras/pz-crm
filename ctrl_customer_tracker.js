@@ -1,5 +1,3 @@
-
-
 $(document).ready(function(){
 
   var config = {
@@ -15,34 +13,62 @@ $(document).ready(function(){
   /////////////////////////////////////////////////////
   function Turnaway(name, reason){
     this.name = name
-    this.time = new Date().getHours() + ":" + new Date().getMinutes()
+    this.time = getCurrentTime()
     this.reason = reason
   }
 
-  function Timesheet(name){
-    this.name=name
-    this.start='00:00'
-    this.break_1_out='00:00'
-    this.break_1_in='00:00'
-    this.lunch_out='00:00'
-    this.lunch_in='00:00'
-    this.break_2_out='00:00'
-    this.break_2_in='00:00'
-    this.out='00:00'
-    this.total=0
-  }
-
   function Timesheet(name, start, break_1_out, break_1_in, lunch_out, lunch_in, break_2_out, break_2_in, out, total){
-    this.name=name
-    this.start=start
-    this.break_1_out=break_1_out
-    this.break_1_in=break_1_in
-    this.lunch_out=lunch_out
-    this.lunch_in=lunch_in
-    this.break_2_out=break_2_out
-    this.break_2_in=break_2_in
-    this.out=out
-    this.total=total
+    if (name){
+      this.name=name
+    } else {
+      this.name='no_name'
+    }
+    if(start){
+      this.start=start
+    } else {
+      this.start='00:00'
+    }
+    if(break_1_out){
+      this.break_1_out=break_1_out
+    } else {
+      this.break_1_out='00:00'
+    }
+    if(break_1_in){
+      this.break_1_in=break_1_in
+    } else {
+      this.break_1_in='00:00'
+    }
+    if(lunch_out){
+      this.lunch_out=lunch_out
+    } else {
+      this.lunch_out='00:00'
+    }
+    if(lunch_in){
+      this.lunch_in=lunch_in
+    } else {
+      this.lunch_in='00:00'
+    }
+    if(break_2_out){
+      this.break_2_out=break_2_out
+    } else {
+      this.break_2_out='00:00'
+    }
+    if(break_2_in){
+      this.break_2_in=break_2_in
+    } else {
+      this.break_2_in='00:00'
+    }
+    if(out){
+      this.out=out
+    } else {
+      this.out='00:00'
+    }
+    if(total){
+      this.total=total
+    } else {
+      this.total=0
+    }
+
   }
 
   function Tracker(){
@@ -91,6 +117,8 @@ $(document).ready(function(){
     $('#turnaway_scroll_body').toggle(false);
     $('#timesheet_body').toggle(false);
     $('#admin_body').toggle(true);
+    drawDailyTotalHistoryChart()
+    drawCustomerTrackingHistoryChart()
   })
 
   $('#show_customer_button').click(function(){
@@ -98,6 +126,7 @@ $(document).ready(function(){
     $('#turnaway_scroll_body').toggle(false);
     $('#timesheet_body').toggle(false);
     $('#admin_body').toggle(false);
+    drawTodaysTrackingChart()
   })
 
   $('#show_turnaway_button').click(function(){
@@ -112,6 +141,39 @@ $(document).ready(function(){
     $('#turnaway_scroll_body').toggle(false);
     $('#timesheet_body').toggle(true);
     $('#admin_body').toggle(false);
+  })
+
+  $('#admin_customer_tracking_button').click(function(){
+    $('#admin_customer_tracking_button').css('background-color', '#4CAF50')
+    $('#admin_timesheet_button').css('background-color', '#F44336')
+    $('#admin_turnaway_button').css('background-color', '#F44336')
+
+    $('#admin_customer_body').toggle(true)
+    $('#admin_turnaway_body').toggle(false)
+    $('#admin_timesheet_body').toggle(false)
+
+    drawDailyTotalHistoryChart()
+    drawCustomerTrackingHistoryChart()
+  })
+
+  $('#admin_timesheet_button').click(function(){
+    $('#admin_customer_tracking_button').css('background-color', '#F44336')
+    $('#admin_timesheet_button').css('background-color', '#4CAF50')
+    $('#admin_turnaway_button').css('background-color', '#F44336')
+
+    $('#admin_customer_body').toggle(false)
+    $('#admin_turnaway_body').toggle(false)
+    $('#admin_timesheet_body').toggle(true)
+  })
+
+  $('#admin_turnaway_button').click(function(){
+    $('#admin_customer_tracking_button').css('background-color', '#F44336')
+    $('#admin_timesheet_button').css('background-color', '#F44336')
+    $('#admin_turnaway_button').css('background-color', '#4CAF50')
+
+    $('#admin_customer_body').toggle(false)
+    $('#admin_turnaway_body').toggle(true)
+    $('#admin_timesheet_body').toggle(false)
   })
 
   $('#by_person_timesheets').click(function(){
@@ -145,7 +207,7 @@ $(document).ready(function(){
 
     all_customers[getTodaysDate()][getTime()]=all_customers[getTodaysDate()][getTime()]-1
     var refString="customers/" + getTodaysDate() + "/" + getTime()
-    saveToDataBase(refString, all_customers[date][getTime()])
+    saveToDataBase(refString, all_customers[getTodaysDate()][getTime()])
     refString="total/" + getTodaysDate()
     saveToDataBase(refString, getDailyTotal(getTodaysDate()))
 
@@ -240,7 +302,7 @@ $(document).ready(function(){
 
       }
       var refString="timesheets/"+getTodaysDate()
-      saveToDataBase(refString, all_timesheets[getTodaysDate()])
+      saveToDataBase(refString, all_timesheets[getTodaysDate()], true)
       updateUI(false, true, false)
   })
 
@@ -292,7 +354,7 @@ $(document).ready(function(){
 
   })
 
-  $("#load_timesheet_2").click(function(){
+  $("#load_timesheet2").click(function(){
     var selected_dates_timesheets = all_timesheets[parseDate($("#pick_timesheet_date").val())]
     var keys = Object.keys(selected_dates_timesheets)
     $('#by_date_table').empty()
@@ -379,8 +441,15 @@ $(document).ready(function(){
     }
   }
 
-  function saveToDataBase(ref, data){
-    database.ref(ref).set(data)
+  function saveToDataBase(ref, data, toast){
+    if(toast){
+      database.ref(ref).set(data).then(function(){
+        Materialize.toast('Saved!', 2000)
+      })
+    } else {
+      database.ref(ref).set(data)
+    }
+
   }
 
   function saveAllToDataBase() {
@@ -408,18 +477,9 @@ $(document).ready(function(){
   }
 
   function saveAllToLocalStorage(){
-    saveObjectToLocalStorage(ptr_todays_total, todays_total)
+
     saveSingleToLocalStorage(ptr_current_half_number, current_half_number)
     saveSingleToLocalStorage(ptr_in_store_number, in_store_number)
-
-    saveObjectToLocalStorage(ptr_todays_tracking, todays_tracking)
-    saveObjectToLocalStorage(ptr_todays_turnaways, todays_turnaways)
-    saveObjectToLocalStorage(ptr_todays_timesheets, todays_timesheets)
-
-    saveObjectToLocalStorage(ptr_all_totals, all_totals)
-    saveObjectToLocalStorage(ptr_all_customers, all_customers)
-    saveObjectToLocalStorage(ptr_all_turnaways, all_turnaways)
-    saveObjectToLocalStorage(ptr_all_timesheets, all_timesheets)
   }
 
   function loadAllFromLocalStorage(){
@@ -477,10 +537,11 @@ $(document).ready(function(){
     var options = {
       title: 'Customer Tracking History',
       hAxis: {title: 'Date',  titleTextStyle: {color: '#333'}},
-      vAxis: {minValue: 0}
+      vAxis: {minValue: 0},
+      curveType: 'function'
     };
 
-    var chart = new google.visualization.AreaChart(document.getElementById('manager_chart2_div'));
+    var chart = new google.visualization.LineChart(document.getElementById('manager_chart2_div'));
     chart.draw(data, options);
   }
 
@@ -529,6 +590,13 @@ $(document).ready(function(){
       e=e+"30"
     }
     return e
+  }
+
+  function getCurrentTime(){
+    var d=new Date();
+    var nhour=d.getHours(),nmin=d.getMinutes();
+    if(nmin<=9) nmin="0"+nmin
+    return nhour + ":" + nmin
   }
 
   function getTotalTime(start, end, lunch){
@@ -591,9 +659,13 @@ $(document).ready(function(){
     var o = e.getFullYear()-21+"-"
     if(parseInt(e.getMonth()+1)<10) {
       o = o +'0'+parseInt(e.getMonth()+1) +'-'
+    } else {
+      o = o + parseInt(e.getMonth()+1) + '-'
     }
     if(e.getDate()<10){
       o = o+"0"+e.getDate()
+    } else {
+      o=o+e.getDate()
     }
     return o;
   }
@@ -603,9 +675,13 @@ $(document).ready(function(){
     var o = e.getFullYear()+"-"
     if(parseInt(e.getMonth()+1)<10) {
       o = o +'0'+parseInt(e.getMonth()+1) +'-'
+    } else {
+      o = o + parseInt(e.getMonth()+1) + '-'
     }
     if(e.getDate()<10){
       o = o+"0"+e.getDate()
+    } else {
+      o=o+e.getDate()
     }
     return o;
   }
@@ -740,9 +816,7 @@ $(document).ready(function(){
 
     //Materialize initialization
     $('#modal1').modal();
-    $('#modal2').modal();
     $('#modal3').modal();
-    $('.collapsible').collapsible();
     $('select').material_select();
     $('.datepicker').pickadate({
       selectMonths: true, // Creates a dropdown to control month
