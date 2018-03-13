@@ -307,37 +307,20 @@ $(document).ready(function(){
   })
 
   $("#load_timesheet").click(function(){
-    var selected_name=""
-    if($('#select_employee').val()==1){
-      selected_name="Craig"
-    } else if($('#select_employee').val()==2){
-      selected_name="Mallory"
-    } else if($('#select_employee').val()==3){
-      selected_name="Austin"
-    } else if($('#select_employee').val()==4){
-      selected_name="James"
-    } else if($('#select_employee').val()==5){
-      selected_name="Marcus"
-    } else if($('#select_employee').val()==6){
-      selected_name="Cathy"
-    } else if($('#select_employee').val()==7){
-      selected_name="Danae"
-    } else if($('#select_employee').val()==8){
-      selected_name="Kory"
-    } else if($('#select_employee').val()==9){
-      selected_name="Jesse"
-    }
+    var selected_name=getSelectedEmployee()
     var employee_timesheet=[]
-    var keys = Object.keys(all_timesheets)
+    var pay_period_total = 0
+    var keys = getPayPeriodKeys($('#select_time_period').val())
     for(var i=0; i<keys.length; i++){
-      if(all_timesheets[keys[i]][selected_name]){
+      if(all_timesheets[keys[i]] && all_timesheets[keys[i]][selected_name]){
         employee_timesheet.push(new Timesheet(keys[i], all_timesheets[keys[i]][selected_name].start, all_timesheets[keys[i]][selected_name].break_1_out, all_timesheets[keys[i]][selected_name].break_1_in, all_timesheets[keys[i]][selected_name].lunch_out, all_timesheets[keys[i]][selected_name].lunch_in, all_timesheets[keys[i]][selected_name].break_2_out, all_timesheets[keys[i]][selected_name].break_2_in, all_timesheets[keys[i]][selected_name].out, all_timesheets[keys[i]][selected_name].total))
       }
     }
     $('#by_person_table').empty()
     for(var i=0;i<employee_timesheet.length;i++){
+      pay_period_total += parseFloat(employee_timesheet[i].total)
       var e=$(
-        '<tr><td><input id="name_'+i+'" type="text"></input></td><td><input id="start_' +i +'" type="text" ></td><td><input id="break1out_'+i+'" type="text"></td><td><input id="break1in_'+i+'" type="text" class="timepicker"></td><td><input id="lunchout_'+i+'" type="text" class="timepicker"></td><td><input id="lunchin_'+i+'"  type="text" class="timepicker"></td><td><input id="break2out_'+i+'" type="text" class="timepicker"></td><td><input id="break2in_'+i+'" type="text" class="timepicker"></td><td><input id="end_'+i+'" type="text" class="timepicker"></td><td><input  id="total_'+i+'"type="text"></input></td></tr>'
+        '<tr><td><input id="name_'+i+'" type="text"></input></td><td><input id="start_' +i +'" type="text" class="timepicker" ></td><td><input id="break1out_'+i+'" type="text" class="timepicker"></td><td><input id="break1in_'+i+'" type="text" class="timepicker"></td><td><input id="lunchout_'+i+'" type="text" class="timepicker"></td><td><input id="lunchin_'+i+'"  type="text" class="timepicker"></td><td><input id="break2out_'+i+'" type="text" class="timepicker"></td><td><input id="break2in_'+i+'" type="text" class="timepicker"></td><td><input id="end_'+i+'" type="text" class="timepicker"></td><td><input  id="total_'+i+'"type="text"></input></td></tr>'
       )
       $('#by_person_table').append(e)
       $('#name_'+i).val(employee_timesheet[i].name)
@@ -350,8 +333,59 @@ $(document).ready(function(){
       $('#break2in_'+i).val(employee_timesheet[i].break_2_in)
       $('#end_'+i).val(employee_timesheet[i].out)
       $('#total_'+i).val(employee_timesheet[i].total)
+      if(employee_timesheet[i].start != '00:00' && employee_timesheet[i].end != '00:00') {
+        var lunch = false
+        if(employee_timesheet[i].lunch_out != '00:00') {
+          lunch = true
+        }
+        $('#total_' +i).val(getTotalTime(employee_timesheet[i].start, employee_timesheet[i].end, lunch))
+      }
+    }
+    $('#pay_period_total').val(pay_period_total)
+    $('.timepicker').pickatime({
+      default: 'now', // Set default time: 'now', '1:30AM', '16:30'
+      fromnow: 0,       // set default time to * milliseconds from now (using with default = 'now')
+      twelvehour: false, // Use AM/PM or 24-hour format
+      donetext: 'OK', // text for done-button
+      cleartext: 'Clear', // text for clear-button
+      autoclose: false, // automatic close timepicker
+      ampmclickable: true, // make AM PM clickable
+      aftershow: function(){
+        console.log('lalal')
+      } //Function for after opening timepicker
+    });
+  })
+
+  $('#save_timesheet').click(function(){
+    var selected_name=getSelectedEmployee()
+    var selected_pay_period=getPayPeriodKeys($('#select_time_period').val())
+
+
+    for(var i = 0; i < $('#by_person_table').children().length; i++){
+      var mdate = $('#name_' + i).val()
+      var refString = "timesheets/" + mdate + '/' + selected_name
+      var total_time = 0
+      var lunch = false
+      if($('#start_'+i).val() != '00:00' && $('#end_'+i).val() != '00:00') {
+        if ($('#lunchout_'+i).val()!='00:00') {
+          lunch = true
+        }
+        total_time=getTotalTime($('#start_'+i).val(), $('#end_'+i).val(), lunch)
+        //TODO: HERE
+        $('#total_' + i).val(total_time)
+      }
+      var data = new Timesheet(selected_name, $('#start_' + i).val(), $('#break1out_' + i).val(), $('#break1in_' + i).val(), $('#lunchout_' + i).val(), $('#lunchin_' + i).val(), $('#break2out_' + i).val(), $('#break2in_' + i).val(), $('#end_' + i).val(), total_time)
+      saveToDataBase(refString, data, true)
     }
 
+  })
+
+  $('#submit_timesheet').click(function(){
+    var selected_name=getSelectedEmployee()
+    var selected_date=parseDate($("#mdate").val())
+    var refString= 'timesheets/' + selected_date + '/' + selected_name
+    var data = new Timesheet(selected_name, $("#mstart").val(), $("#mbreak1out").val(), $("#mbreak1in").val(), $("#mlunchout").val(), $("#mlunchin").val(), $("#mbreak2out").val(), $("#mbreak2in").val(), $("#mend").val())
+    saveToDataBase(refString, data)
   })
 
   $("#load_timesheet2").click(function(){
@@ -374,7 +408,46 @@ $(document).ready(function(){
       $('#iend_'+i).val(selected_dates_timesheets[keys[i]].out)
       $('#itotal_'+i).val(selected_dates_timesheets[keys[i]].total)
     }
+    $('.timepicker').pickatime({
+      default: 'now', // Set default time: 'now', '1:30AM', '16:30'
+      fromnow: 0,       // set default time to * milliseconds from now (using with default = 'now')
+      twelvehour: false, // Use AM/PM or 24-hour format
+      donetext: 'OK', // text for done-button
+      cleartext: 'Clear', // text for clear-button
+      autoclose: false, // automatic close timepicker
+      ampmclickable: true, // make AM PM clickable
+      aftershow: function(){
+        console.log('lalal')
+      } //Function for after opening timepicker
+    });
 
+  })
+
+  $('#select_filter').change(function(){
+    if($('#select_filter').val()==1){
+      $('#by_day_filter').toggle(true)
+      $('#by_week_filter').toggle(false)
+      $('#top_5_filter').toggle(false)
+      $('#daily_average_filter').toggle(false)
+    }
+    if($('#select_filter').val()==2){
+      $('#by_day_filter').toggle(false)
+      $('#by_week_filter').toggle(true)
+      $('#top_5_filter').toggle(false)
+      $('#daily_average_filter').toggle(false)
+    }
+    if($('#select_filter').val()==3){
+      $('#by_day_filter').toggle(false)
+      $('#by_week_filter').toggle(false)
+      $('#top_5_filter').toggle(false)
+      $('#daily_average_filter').toggle(true)
+    }
+    if($('#select_filter').val()==4){
+      $('#by_day_filter').toggle(false)
+      $('#by_week_filter').toggle(false)
+      $('#top_5_filter').toggle(true)
+      $('#daily_average_filter').toggle(false)
+    }
   })
 
   ////////////////////////////////////////////////////
@@ -558,6 +631,10 @@ $(document).ready(function(){
         color='orange'
       } else if (i==3){
         color='green'
+      } else if (i==4) {
+        color='purple'
+      } else if (i==5) {
+        color='#01a0ff'
       }
       graph_data.push([keys[i], all_totals[keys[i]], color])
     }
@@ -572,6 +649,205 @@ $(document).ready(function(){
 
    var chart = new google.visualization.BarChart(document.getElementById('manager_chart1_div'));
    chart.draw(data, options);
+  }
+
+  function getPayPeriodKeys(e){
+    var year = new Date().getFullYear()
+    var keys = []
+    if(e==1){
+      for(var i = 0; i <15; i++){
+        if(i+1<10){
+          keys.push(year + '-01-0' + (i+1))
+        } else {
+          keys.push(year + '-01-' + (i+1))
+        }
+      }
+    }
+    if(e==2){
+      for(var i = 16; i <32; i++){
+        keys.push(year + '-01-' + i)
+      }
+    }
+    if(e==3){
+      for(var i = 0; i <15; i++){
+        if(i+1<10){
+          keys.push(year + '-02-0' + (i+1))
+        } else {
+          keys.push(year + '-02-' + (i+1))
+        }
+      }
+    }
+    if(e==4){
+      for(var i = 16; i <30; i++){
+        keys.push(year + '-02-' + i)
+      }
+    }
+    if(e==5){
+      for(var i = 0; i <15; i++){
+        if(i+1<10){
+          keys.push(year + '-03-0' + (i+1))
+        } else {
+          keys.push(year + '-03-' + (i+1))
+        }
+      }
+    }
+    if(e==6){
+      for(var i = 16; i <32; i++){
+        keys.push(year + '-03-' + i)
+      }
+    }
+    if(e==7){
+      for(var i = 0; i <15; i++){
+        if(i+1<10){
+          keys.push(year + '-04-0' + (i+1))
+        } else {
+          keys.push(year + '-04-' + (i+1))
+        }
+      }
+    }
+    if(e==8){
+      for(var i = 16; i <31; i++){
+        keys.push(year + '-04-' + i)
+      }
+    }
+    if(e==9){
+      for(var i = 0; i <15; i++){
+        if(i+1<10){
+          keys.push(year + '-05-0' + (i+1))
+        } else {
+          keys.push(year + '-05-' + (i+1))
+        }
+      }
+    }
+    if(e==10){
+      for(var i = 16; i <32; i++){
+        keys.push(year + '-05-' + i)
+      }
+    }
+    if(e==11){
+      for(var i = 0; i <15; i++){
+        if(i+1<10){
+          keys.push(year + '-06-0' + (i+1))
+        } else {
+          keys.push(year + '-06-' + (i+1))
+        }
+      }
+    }
+    if(e==12){
+      for(var i = 16; i <31; i++){
+        keys.push(year + '-06-' + i)
+      }
+    }
+    if(e==13){
+      for(var i = 0; i <15; i++){
+        if(i+1<10){
+          keys.push(year + '-07-0' + (i+1))
+        } else {
+          keys.push(year + '-07-' + (i+1))
+        }
+      }
+    }
+    if(e==14){
+      for(var i = 16; i <32; i++){
+        keys.push(year + '-07-' + i)
+      }
+    }
+    if(e==15){
+      for(var i = 0; i <15; i++){
+        if(i+1<10){
+          keys.push(year + '-08-0' + (i+1))
+        } else {
+          keys.push(year + '-08-' + (i+1))
+        }
+      }
+    }
+    if(e==16){
+      for(var i = 16; i <32; i++){
+        keys.push(year + '-08-' + i)
+      }
+    }
+    if(e==17){
+      for(var i = 0; i <15; i++){
+        if(i+1<10){
+          keys.push(year + '-09-0' + (i+1))
+        } else {
+          keys.push(year + '-09-' + (i+1))
+        }
+      }
+    }
+    if(e==18){
+      for(var i = 16; i <31; i++){
+        keys.push(year + '-09-' + i)
+      }
+    }
+    if(e==19){
+      for(var i = 0; i <15; i++){
+        if(i+1<10){
+          keys.push(year + '-10-0' + (i+1))
+        } else {
+          keys.push(year + '-10-' + (i+1))
+        }
+      }
+    }
+    if(e==20){
+      for(var i = 16; i <32; i++){
+        keys.push(year + '-10-' + i)
+      }
+    }
+    if(e==21){
+      for(var i = 0; i <15; i++){
+        if(i+1<10){
+          keys.push(year + '-11-0' + (i+1))
+        } else {
+          keys.push(year + '-11-' + (i+1))
+        }
+      }
+    }
+    if(e==22){
+      for(var i = 16; i <31; i++){
+        keys.push(year + '-11-' + i)
+      }
+    }
+    if(e==23){
+      for(var i = 0; i <15; i++){
+        if(i+1<10){
+          keys.push(year + '-12-0' + (i+1))
+        } else {
+          keys.push(year + '-12-' + (i+1))
+        }
+      }
+    }
+    if(e==24){
+      for(var i = 16; i <32; i++){
+        keys.push(year + '-12-' + i)
+      }
+    }
+
+    return keys
+  }
+
+  function getSelectedEmployee(){
+    var selected_name = ""
+    if($('#select_employee').val()==1){
+      selected_name="Craig"
+    } else if($('#select_employee').val()==2){
+      selected_name="Mallory"
+    } else if($('#select_employee').val()==3){
+      selected_name="Austin"
+    } else if($('#select_employee').val()==4){
+      selected_name="James"
+    } else if($('#select_employee').val()==5){
+      selected_name="Marcus"
+    } else if($('#select_employee').val()==6){
+      selected_name="Cathy"
+    } else if($('#select_employee').val()==7){
+      selected_name="Danae"
+    } else if($('#select_employee').val()==8){
+      selected_name="Kory"
+    } else if($('#select_employee').val()==9){
+      selected_name="Jesse"
+    }
+    return selected_name
   }
 
   function getTime(){
@@ -735,6 +1011,28 @@ $(document).ready(function(){
     return parsed_date
   }
 
+  function parseWeekday(date){
+    var mdate = "invalid_date"
+    var e = new Date(date)
+    var o = e.getDay()
+    if (o==0){
+      mdate="Sunday"
+    } else if (o==1){
+      mdate="Monday"
+    } else if (o==2){
+      mdate="Tuesday"
+    } else if (o==3){
+      mdate="Wednesday"
+    } else if (o==4){
+      mdate="Thursday"
+    } else if (o==5){
+      mdate="Friday"
+    } else if (o==6){
+      mdate="Saturday"
+    }
+    return mdate
+  }
+
   function updateUI(customers, timesheets, turnaways, totals){
 
 
@@ -816,6 +1114,7 @@ $(document).ready(function(){
 
     //Materialize initialization
     $('#modal1').modal();
+    $('#modal2').modal();
     $('#modal3').modal();
     $('select').material_select();
     $('.datepicker').pickadate({
