@@ -117,8 +117,8 @@ $(document).ready(function(){
     $('#turnaway_scroll_body').toggle(false);
     $('#timesheet_body').toggle(false);
     $('#admin_body').toggle(true);
-    drawDailyTotalHistoryChart()
-    drawCustomerTrackingHistoryChart()
+    drawDailyTotalHistoryChart(all_totals)
+    drawCustomerTrackingHistoryChart(all_customers)
   })
 
   $('#show_customer_button').click(function(){
@@ -152,8 +152,8 @@ $(document).ready(function(){
     $('#admin_turnaway_body').toggle(false)
     $('#admin_timesheet_body').toggle(false)
 
-    drawDailyTotalHistoryChart()
-    drawCustomerTrackingHistoryChart()
+    drawDailyTotalHistoryChart(all_totals)
+    drawCustomerTrackingHistoryChart(all_customers)
   })
 
   $('#admin_timesheet_button').click(function(){
@@ -423,6 +423,19 @@ $(document).ready(function(){
 
   })
 
+  $('#apply_filter').click(function(){
+    var selected_filter = $('#select_filter').val()
+     if(selected_filter==1){
+       filterByDay($('#select_by_day').val(), $('#select_num_by_day').val())
+     } else if(selected_filter==2){
+       filterByWeek($('#by_week_start_date').val())
+     } else if(selected_filter==3){
+       filterDailyAverages($('#select_daily_average').val())
+     } else if(selected_filter==4){
+       filterTopFive($('#select_top_5').val())
+     }
+  })
+
   $('#select_filter').change(function(){
     if($('#select_filter').val()==1){
       $('#by_day_filter').toggle(true)
@@ -447,6 +460,107 @@ $(document).ready(function(){
       $('#by_week_filter').toggle(false)
       $('#top_5_filter').toggle(true)
       $('#daily_average_filter').toggle(false)
+    }
+  })
+
+  $('#submit_edit_customer').click(function(){
+    var data = parseInt($('#edit_customer_input').val())
+    var time_keys = Object.keys(all_customers[getTodaysDate()])
+    var refString = "customers/" + getTodaysDate() + "/" + time_keys[$('#select_edit_customer').val()-1]
+    saveToDataBase(refString, data, true)
+  })
+
+  $('#select_edit_customer').change(function(){
+    var keys = Object.keys(all_customers)
+    if($('#select_edit_customer').val()==1){
+      $('#edit_customer_input').val(all_customers[getTodaysDate()]['08:00'])
+    }
+    if($('#select_edit_customer').val()==2){
+      $('#edit_customer_input').val(all_customers[getTodaysDate()]['08:30'])
+    }
+    if($('#select_edit_customer').val()==3){
+      $('#edit_customer_input').val(all_customers[getTodaysDate()]['09:00'])
+    }
+    if($('#select_edit_customer').val()==4){
+      $('#edit_customer_input').val(all_customers[getTodaysDate()]['09:30'])
+    }
+    if($('#select_edit_customer').val()==5){
+      $('#edit_customer_input').val(all_customers[getTodaysDate()]['10:00'])
+    }
+    if($('#select_edit_customer').val()==6){
+      $('#edit_customer_input').val(all_customers[getTodaysDate()]['10:30'])
+    }
+    if($('#select_edit_customer').val()==7){
+      $('#edit_customer_input').val(all_customers[getTodaysDate()]['11:00'])
+    }
+    if($('#select_edit_customer').val()==8){
+      $('#edit_customer_input').val(all_customers[getTodaysDate()]['11:30'])
+    }
+    if($('#select_edit_customer').val()==9){
+      $('#edit_customer_input').val(all_customers[getTodaysDate()]['12:00'])
+    }
+    if($('#select_edit_customer').val()==10){
+      $('#edit_customer_input').val(all_customers[getTodaysDate()]['12:30'])
+    }
+    if($('#select_edit_customer').val()==11){
+      $('#edit_customer_input').val(all_customers[getTodaysDate()]['13:00'])
+    }
+    if($('#select_edit_customer').val()==12){
+      $('#edit_customer_input').val(all_customers[getTodaysDate()]['13:30'])
+    }
+    if($('#select_edit_customer').val()==13){
+      $('#edit_customer_input').val(all_customers[getTodaysDate()]['14:00'])
+    }
+    if($('#select_edit_customer').val()==14){
+      $('#edit_customer_input').val(all_customers[getTodaysDate()]['14:30'])
+    }
+    if($('#select_edit_customer').val()==15){
+      $('#edit_customer_input').val(all_customers[getTodaysDate()]['15:00'])
+    }
+    if($('#select_edit_customer').val()==16){
+      $('#edit_customer_input').val(all_customers[getTodaysDate()]['15:30'])
+    }
+    if($('#select_edit_customer').val()==17){
+      $('#edit_customer_input').val(all_customers[getTodaysDate()]['16:00'])
+    }
+    if($('#select_edit_customer').val()==18){
+      $('#edit_customer_input').val(all_customers[getTodaysDate()]['16:30'])
+    }
+    if($('#select_edit_customer').val()==19){
+      $('#edit_customer_input').val(all_customers[getTodaysDate()]['17:00'])
+    }
+    if($('#select_edit_customer').val()==20){
+      $('#edit_customer_input').val(all_customers[getTodaysDate()]['17:30'])
+    }
+    if($('#select_edit_customer').val()==21){
+      $('#edit_customer_input').val(all_customers[getTodaysDate()]['18:00'])
+    }
+    if($('#select_edit_customer').val()==22){
+      $('#edit_customer_input').val(all_customers[getTodaysDate()]['18:30'])
+    }
+    if($('#select_edit_customer').val()==23){
+      $('#edit_customer_input').val(all_customers[getTodaysDate()]['19:00'])
+    }
+    if($('#select_edit_customer').val()==24){
+      $('#edit_customer_input').val(all_customers[getTodaysDate()]['19:30'])
+    }
+    if($('#select_edit_customer').val()==25){
+      $('#edit_customer_input').val(all_customers[getTodaysDate()]['20:00'])
+    }
+    if($('#select_edit_customer').val()==26){
+      $('#edit_customer_input').val(all_customers[getTodaysDate()]['20:30'])
+    }
+    if($('#select_edit_customer').val()==27){
+      $('#edit_customer_input').val(all_customers[getTodaysDate()]['21:00'])
+    }
+    if($('#select_edit_customer').val()==28){
+      $('#edit_customer_input').val(all_customers[getTodaysDate()]['21:30'])
+    }
+    if($('#select_edit_customer').val()==29){
+      $('#edit_customer_input').val(all_customers[getTodaysDate()]['22:00'])
+    }
+    if($('#select_edit_customer').val()==30){
+      $('#edit_customer_input').val(all_customers[getTodaysDate()]['22:30'])
     }
   })
 
@@ -566,6 +680,73 @@ $(document).ready(function(){
 
   }
 
+  function filterByDay(day, numDays){
+    var selected_day = ""
+    if (day == 1) {
+      selected_day="Monday"
+    } else if (day == 2) {
+      selected_day="Tuesday"
+    } else if (day == 3) {
+      selected_day="Wednesday"
+    } else if (day == 4) {
+      selected_day="Thursday"
+    } else if (day == 5) {
+      selected_day="Friday"
+    } else if (day == 6) {
+      selected_day="Saturday"
+    } else if (day == 7) {
+      selected_day="Sunday"
+    }
+    var keys = Object.keys(all_totals)
+    var filtered_list = {}
+    var filtered_tracking={}
+    for(var i = 0; i < keys.length; i++){
+      if(parseWeekday(keys[i])==selected_day){
+        filtered_list[keys[i]]=all_totals[keys[i]]
+        filtered_tracking[keys[i]]=all_customers[keys[i]]
+      }
+      if(Object.keys(filtered_list).length == numDays){
+        break
+      }
+    }
+    drawDailyTotalHistoryChart(filtered_list)
+    drawCustomerTrackingHistoryChart(filtered_tracking)
+  }
+
+  function filterByWeek(startDay){
+    //TODO: add catch for invalid start dates
+    var filtered_totals={}
+    var filtered_tracking={}
+    var start_date=parseDate(startDay)
+    var keys=Object.keys(all_totals)
+    for(var i = keys.indexOf(start_date); i < keys.indexOf(start_date)+7; i++){
+      filtered_totals[keys[i]] = all_totals[keys[i]]
+      filtered_tracking[keys[i]] = all_customers[keys[i]]
+    }
+    keys = Object.keys(all_customers)
+    for(var i = keys.indexOf(start_date); i < keys.indexOf(start_date)+7; i++){
+      filtered_tracking[keys[i]] = all_customers[keys[i]]
+    }
+    console.log(filtered_tracking)
+    drawDailyTotalHistoryChart(filtered_totals)
+    drawCustomerTrackingHistoryChart(filtered_tracking)
+    console.log('filter by week')
+  }
+
+  function filterDailyAverages(days){
+    console.log('filter daily averages')
+  }
+
+  function filterTopFive(range){
+    var top_5_totals = {}
+    var keys = Object.keys(all_totals)
+    var values = Object.values(all_totals)
+    for(var i = 0; i < values.length; i++){
+
+    }
+    console.log('filter top 5')
+  }
+
   function drawTodaysTrackingChart() {
     var keys = Object.keys(all_customers[getTodaysDate()])
     var graph_data = [["Time", "Customers"]]
@@ -587,12 +768,13 @@ $(document).ready(function(){
     chart.draw(data, options);
   }
 
-  function drawCustomerTrackingHistoryChart(){
-    var keys = Object.keys(all_customers)
+  function drawCustomerTrackingHistoryChart(mdata){
+    var keys = Object.keys(mdata)
+    //keys = keys.slice(Math.max(keys.length-7, 1))
     var graph_data = [["Time"]]
     for(var i = 0; i<keys.length;i++){
       graph_data[0][i+1]=keys[i]
-      var daily_keys = Object.keys(all_customers[keys[i]])
+      var daily_keys = Object.keys(mdata[keys[i]])
       for (var h = 0;h<daily_keys.length; h++) {
 
         if(!graph_data[h+1]) {
@@ -602,7 +784,7 @@ $(document).ready(function(){
           graph_data[h+1][i+1]=0
         }
         graph_data[h+1][0]=daily_keys[h]
-        graph_data[h+1][i+1]=all_customers[keys[i]][daily_keys[h]]
+        graph_data[h+1][i+1]=mdata[keys[i]][daily_keys[h]]
       }
     }
     var data = google.visualization.arrayToDataTable(graph_data);
@@ -618,25 +800,29 @@ $(document).ready(function(){
     chart.draw(data, options);
   }
 
-  function drawDailyTotalHistoryChart(){
-    var keys = Object.keys(all_totals)
+  function drawDailyTotalHistoryChart(mdata){
+    var keys = Object.keys(mdata)
     var graph_data = [["Date", "Total", {role: 'style'}]]
+    var color_counter=0
     for (var i = 0; i <keys.length; i++){
       var color = ''
-      if (i==0){
+      if (color_counter==0){
         color='blue'
-      } else if (i==1){
+      } else if (color_counter==1){
         color='red'
-      } else if (i==2){
+      } else if (color_counter==2){
         color='orange'
-      } else if (i==3){
+      } else if (color_counter==3){
         color='green'
-      } else if (i==4) {
+      } else if (color_counter==4) {
         color='purple'
-      } else if (i==5) {
+      } else if (color_counter==5) {
         color='#01a0ff'
+      } else if (color_counter==6) {
+        color='pink'
       }
-      graph_data.push([keys[i], all_totals[keys[i]], color])
+      graph_data.push([keys[i], mdata[keys[i]], color])
+      color_counter++
     }
     var data = google.visualization.arrayToDataTable(graph_data);
 
@@ -1015,19 +1201,19 @@ $(document).ready(function(){
     var mdate = "invalid_date"
     var e = new Date(date)
     var o = e.getDay()
-    if (o==0){
+    if (o==6){
       mdate="Sunday"
-    } else if (o==1){
+    } else if (o==0){
       mdate="Monday"
-    } else if (o==2){
+    } else if (o==1){
       mdate="Tuesday"
-    } else if (o==3){
+    } else if (o==2){
       mdate="Wednesday"
-    } else if (o==4){
+    } else if (o==3){
       mdate="Thursday"
-    } else if (o==5){
+    } else if (o==4){
       mdate="Friday"
-    } else if (o==6){
+    } else if (o==5){
       mdate="Saturday"
     }
     return mdate
@@ -1040,7 +1226,7 @@ $(document).ready(function(){
       $('#current_half_number').val(all_customers[getTodaysDate()][getTime()])
       $('#todays_total').val(getDailyTotal(getTodaysDate()))
       drawTodaysTrackingChart()
-      drawCustomerTrackingHistoryChart()
+      drawCustomerTrackingHistoryChart(all_customers)
     }
 
     if(all_turnaways && turnaways){
@@ -1092,7 +1278,7 @@ $(document).ready(function(){
       }
     }
     if(all_totals && totals) {
-      drawDailyTotalHistoryChart()
+      drawDailyTotalHistoryChart(all_totals)
     }
   }
 
@@ -1107,15 +1293,15 @@ $(document).ready(function(){
   //redraw graph when window resize is completed
   $(window).on('resizeEnd', function() {
     drawTodaysTrackingChart();
-    drawDailyTotalHistoryChart()
-    drawCustomerTrackingHistoryChart()
+    drawDailyTotalHistoryChart(all_totals)
+    drawCustomerTrackingHistoryChart(all_customers)
   });
-
 
     //Materialize initialization
     $('#modal1').modal();
     $('#modal2').modal();
     $('#modal3').modal();
+    $('#modal4').modal();
     $('select').material_select();
     $('.datepicker').pickadate({
       selectMonths: true, // Creates a dropdown to control month

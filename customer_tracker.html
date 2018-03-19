@@ -148,8 +148,53 @@
             </div>
           </div>
 
+          <div class="row right">
+              <a id="edit_customer" class="btn-flat btn-small waves-effect waves-yellow modal-trigger modal4" href='#modal4' ><i class="material-icons">edit</i></a>
+          </div>
 
-
+          <div id="modal4" class="modal">
+            <div class="modal-content">
+              <h6>Edit Customer Tracker</h6>
+              <select id="select_edit_customer">
+                <option value="none" disabled selected>Pick Time..</option>
+                <option value="1">8:00</option>
+                <option value="2">8:30</option>
+                <option value="3">9:00</option>
+                <option value="4">9:30</option>
+                <option value="5">10:00</option>
+                <option value="6">10:30</option>
+                <option value="7">11:00</option>
+                <option value="8">11:30</option>
+                <option value="9">12:00</option>
+                <option value="10">12:30</option>
+                <option value="11">13:00</option>
+                <option value="12">13:30</option>
+                <option value="13">14:00</option>
+                <option value="14">14:30</option>
+                <option value="15">15:00</option>
+                <option value="16">15:30</option>
+                <option value="17">16:00</option>
+                <option value="18">16:30</option>
+                <option value="19">17:00</option>
+                <option value="20">17:30</option>
+                <option value="21">18:00</option>
+                <option value="22">18:30</option>
+                <option value="23">19:00</option>
+                <option value="24">19:30</option>
+                <option value="25">20:00</option>
+                <option value="26">20:30</option>
+                <option value="27">21:00</option>
+                <option value="28">21:30</option>
+                <option value="29">22:00</option>
+                <option value="30">22:30</option>
+              </select>
+              <input id="edit_customer_input" type="number"></input>
+            </div>
+            <div class="modal-footer">
+              <a href="#!" id="submit_edit_customer"class="modal-action modal-close waves-effect waves-green btn-flat">Submit</a>
+              <a href="#!" class="modal-action modal-close waves-effect waves-red btn-flat">Cancel</a>
+            </div>
+          </div>
 
 
 
@@ -287,7 +332,7 @@
                 <div class="col s6">
                   <label>Number of Days</label>
                     <p class="range-field">
-                      <input type="range" id="test5" min="0" max="10" />
+                      <input type="range" id="select_num_by_day" min="0" max="10" />
                     </p>
                 </div>
               </div>
@@ -321,8 +366,8 @@
                 </select>
               </div>
             </div>
-            <div class="col s3">
-              <a class="waves-effect waves-teal btn green"><i class="material-icons">fast_forward</i></a>
+            <div class="col s3 center">
+              <a id="apply_filter" class="waves-effect waves-teal btn green"><i class="material-icons">fast_forward</i></a>
             </div>
           </div>
           <div class="row">
