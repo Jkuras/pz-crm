@@ -727,17 +727,50 @@ $(document).ready(function(){
     for(var i = keys.indexOf(start_date); i < keys.indexOf(start_date)+7; i++){
       filtered_tracking[keys[i]] = all_customers[keys[i]]
     }
-    console.log(filtered_tracking)
     drawDailyTotalHistoryChart(filtered_totals)
     drawCustomerTrackingHistoryChart(filtered_tracking)
-    console.log('filter by week')
   }
 
   function filterDailyAverages(days){
-    console.log('filter daily averages')
+    //TODO: find averages for daily tracking (aka cry and die)
+    var named_days = {}
+    for(var i = 0; i<days.length; i++){
+      var e = ""
+      if (days[i] == 1) {
+        e="Monday"
+      } else if (days[i] == 2) {
+        e="Tuesday"
+      } else if (days[i] == 3) {
+        e="Wednesday"
+      } else if (days[i] == 4) {
+        e="Thursday"
+      } else if (days[i] == 5) {
+        e="Friday"
+      } else if (days[i] == 6) {
+        e="Saturday"
+      } else if (days[i] == 7) {
+        e="Sunday"
+      }
+      named_days[e]=0
+    }
+    var keys = Object.keys(named_days)
+    var total_keys = Object.keys(all_totals)
+    for(var i = 0; i<keys.length; i++){
+      var daily_average = 0
+      var divide_by = 0
+      for(var o = 0; o<total_keys.length; o++){
+        if(parseWeekday(total_keys[o])==keys[i]){
+          daily_average+=all_totals[total_keys[o]]
+          divide_by++
+        }
+      }
+      named_days[keys[i]]=daily_average/divide_by
+    }
+    drawDailyTotalHistoryChart(named_days)
   }
 
   function filterTopFive(range){
+    //TODO: fuq
     var top_5_totals = {}
     var keys = Object.keys(all_totals)
     var values = Object.values(all_totals)
