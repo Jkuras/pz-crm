@@ -734,6 +734,7 @@ $(document).ready(function(){
   function filterDailyAverages(days){
     //TODO: find averages for daily tracking (aka cry and die)
     var named_days = {}
+    var named_tracking = {}
     for(var i = 0; i<days.length; i++){
       var e = ""
       if (days[i] == 1) {
@@ -752,10 +753,12 @@ $(document).ready(function(){
         e="Sunday"
       }
       named_days[e]=0
+      named_tracking[e] = new Tracker()
     }
     var keys = Object.keys(named_days)
     var total_keys = Object.keys(all_totals)
     for(var i = 0; i<keys.length; i++){
+      //Calculate the average of daily totals one by one
       var daily_average = 0
       var divide_by = 0
       for(var o = 0; o<total_keys.length; o++){
@@ -765,7 +768,11 @@ $(document).ready(function(){
         }
       }
       named_days[keys[i]]=daily_average/divide_by
+
+      //Calculate the daily tracking averages
+
     }
+
     drawDailyTotalHistoryChart(named_days)
   }
 
