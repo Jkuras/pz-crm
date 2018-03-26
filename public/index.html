@@ -23,13 +23,40 @@
         <div class='center col s12 m12 l12'>
           <p>Hi Welcome To The Pot Zone</p>
           <div id="clockbox"></div>
-          <select id="location_select">
-            <option value="none" disabled selected>Select Store</option>
-            <option value="1">Tacoma</option>
-            <option value="2">Port Orchard</option>
-          </select>
-        </div>
 
+        </div>
+        <div class="row">
+          <div id="no_user" class="col s12 white black-text">
+            <div class="row">
+              <div class="col s12 m6">
+                <label for="email">Email</label>
+                <input id="email" type="text" class="validate">
+              </div>
+              <div class="col s12 m6">
+                <label for="password">Password</label>
+                <input id="password" type="password" class="validate">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col s6">
+                <div id="sign_in_button" class='btn btn-small waves-effect waves-light'>Sign In</div>
+              </div>
+              <div class="col s6">
+                <div id="sign_up_button" class='btn btn-small waves-effect waves-light'>Sign Up</div>
+              </div>
+            </div>
+          </div>
+          <div id="signed_in" class="col s12" style="display:none">
+            <div class="row">
+              <div class="col s6 center">
+                <p id="welcome_text">Welcome!</p>
+              </div>
+              <div class="col s6 center">
+                <div id="sign_out_button" class='white-text btn btn-small btn-flat waves-effect waves-light'>Sign Out</div>
+              </div>
+            </div>
+          </div>
+        </div>
 
         </div>
 
@@ -582,4 +609,10 @@
       <div class="footer-copyright">
         <div class="container">
           This product was made exclusively by Jesse Kuras utilizing Materialize, JQuery, Firebase, and Google Charts, for The Pot Zone.
-          Please contact Jess
+          Please contact Jesse at j.l.kuras95@gmail.com with questions, comments, concerns, and suggestions, or to inquire about contracting your own website or productivity application.
+        </div>
+      </div>
+    </footer>
+
+  </body>
+</html>

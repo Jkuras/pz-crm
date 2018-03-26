@@ -7,7 +7,7 @@ $(document).ready(function(){
   };
   firebase.initializeApp(config);
   google.charts.load('current', {'packages':['corechart']})
-  console.log('lalalalala')
+
   /////////////////////////////////////////////////////
   //START OBJECT SETUPS////////////////////////////////
   /////////////////////////////////////////////////////
@@ -88,6 +88,7 @@ $(document).ready(function(){
   //START VARIABLE SETUPS//////////////////////////////
   /////////////////////////////////////////////////////
   var database=firebase.database()
+  var authentication=firebase.auth()
 
 
   var in_store_number
@@ -348,7 +349,8 @@ $(document).ready(function(){
         if(employee_timesheet[i].lunch_out != '00:00') {
           lunch = true
         }
-        console.log(employee_timesheet[i].start)
+
+
         $('#total_' +i).val(getTotalTime(employee_timesheet[i].start, employee_timesheet[i].out, lunch))
       }
     }
@@ -362,7 +364,7 @@ $(document).ready(function(){
       autoclose: false, // automatic close timepicker
       ampmclickable: true, // make AM PM clickable
       aftershow: function(){
-        console.log('lalal')
+
       } //Function for after opening timepicker
     });
   })
@@ -428,7 +430,7 @@ $(document).ready(function(){
       autoclose: false, // automatic close timepicker
       ampmclickable: true, // make AM PM clickable
       aftershow: function(){
-        console.log('lalal')
+
       } //Function for after opening timepicker
     });
 
@@ -575,6 +577,26 @@ $(document).ready(function(){
     }
   })
 
+  $('#sign_in_button').click(function(){
+    var email = $('#email').val()
+    var password = $('#password').val()
+    if(ValidateEmail(email)){
+      signInUser(email, password)
+    }
+  })
+
+  $('#sign_up_button').click(function(){
+    var email = $('#email').val()
+    var password = $('#password').val()
+    if(ValidateEmail(email)){
+      createNewUser(email, password)
+    }
+  })
+
+  $('#sign_out_button').click(function(){
+    authentication.signOut()
+  })
+
   ////////////////////////////////////////////////////
   //STOP ONCLICK SETUPS///////////////////////////////
   ////////////////////////////////////////////////////
@@ -621,7 +643,7 @@ $(document).ready(function(){
         all_timesheets=snapshot.val();
         //Materialize.toast('Timesheet History Loaded!', 2000)
         updateUI(false, true, false, false)
-        console.log(all_timesheets)
+
       })
     }
     if(turnaways){
@@ -796,7 +818,7 @@ $(document).ready(function(){
     for(var i = 0; i < values.length; i++){
 
     }
-    console.log('filter top 5')
+
   }
 
   function drawTodaysTrackingChart() {
@@ -821,7 +843,7 @@ $(document).ready(function(){
   }
 
   function drawCustomerTrackingHistoryChart(mdata){
-    console.log(mdata)
+
     var keys = Object.keys(mdata)
     //keys = keys.slice(Math.max(keys.length-7, 1))
     var graph_data = [["Time"]]
@@ -1272,6 +1294,50 @@ $(document).ready(function(){
     return mdate
   }
 
+  function ValidateEmail(mail) {
+   if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(mail))
+    {
+      return (true)
+    }
+      alert("You have entered an invalid email address!")
+      return (false)
+  }
+
+  function createNewUser(email, password){
+    authentication.createUserWithEmailAndPassword(email, password).catch(function(error) {
+      // Handle Errors here.
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      // ...
+    });
+  }
+
+  function signInUser(email, password){
+    firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+      // Handle Errors here.
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      // ...
+    });
+  }
+
+  authentication.onAuthStateChanged(function(user){
+    var user = authentication.currentUser
+    if(user){
+      $('#no_user').toggle(false)
+      $('#signed_in').toggle(true)
+      if(user.displayName){
+        $('#welcome_text').text('Wecome, ' +user.displayName+"!")
+      } else {
+        $('#welcome_text').text('Wecome, ' +user.email+"!")
+      }
+
+    } else {
+      $('#no_user').toggle(true)
+      $('#signed_in').toggle(false)
+    }
+  })
+
   function updateUI(customers, timesheets, turnaways, totals){
 
 
@@ -1286,8 +1352,7 @@ $(document).ready(function(){
         last_week[keys[i]]=all_customers[keys[i]]
         e++
       }
-      console.log(all_customers)
-      console.log(last_week)
+
       drawCustomerTrackingHistoryChart(last_week)
     }
 
@@ -1334,13 +1399,13 @@ $(document).ready(function(){
           autoclose: false, // automatic close timepicker
           ampmclickable: true, // make AM PM clickable
           aftershow: function(){
-            console.log('lalal')
+
           } //Function for after opening timepicker
         });
       }
     }
     if(all_totals && totals) {
-      console.log(all_totals)
+
       var keys = Object.keys(all_totals)
       var last_week = {}
       var e = 0
