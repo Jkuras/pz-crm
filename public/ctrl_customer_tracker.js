@@ -89,6 +89,7 @@ $(document).ready(function(){
   /////////////////////////////////////////////////////
   var database=firebase.database()
   var authentication=firebase.auth()
+  var user=null
 
 
   var in_store_number
@@ -97,7 +98,7 @@ $(document).ready(function(){
   var all_customers, all_timesheets, all_totals, all_turnaways;
   $('#date').val(getTodaysDate())
   $('#21on_date').val(getTwentyOneOnDate())
-  getDataBaseInfo(true, true, true, true)
+  //getDataBaseInfo(true, true, true, true)
   loadAllFromLocalStorage()
   getClock();
   halfHourCheck();
@@ -147,10 +148,12 @@ $(document).ready(function(){
     $('#admin_customer_tracking_button').css('background-color', '#4CAF50')
     $('#admin_timesheet_button').css('background-color', '#F44336')
     $('#admin_turnaway_button').css('background-color', '#F44336')
+    $('#admin_profile_button').css('background-color', '#F44336')
 
     $('#admin_customer_body').toggle(true)
     $('#admin_turnaway_body').toggle(false)
     $('#admin_timesheet_body').toggle(false)
+    $('#admin_profile_body').toggle(false)
 
     drawDailyTotalHistoryChart(all_totals)
     drawCustomerTrackingHistoryChart(all_customers)
@@ -160,20 +163,36 @@ $(document).ready(function(){
     $('#admin_customer_tracking_button').css('background-color', '#F44336')
     $('#admin_timesheet_button').css('background-color', '#4CAF50')
     $('#admin_turnaway_button').css('background-color', '#F44336')
+    $('#admin_profile_button').css('background-color', '#F44336')
 
     $('#admin_customer_body').toggle(false)
     $('#admin_turnaway_body').toggle(false)
     $('#admin_timesheet_body').toggle(true)
+    $('#admin_profile_body').toggle(false)
   })
 
   $('#admin_turnaway_button').click(function(){
     $('#admin_customer_tracking_button').css('background-color', '#F44336')
     $('#admin_timesheet_button').css('background-color', '#F44336')
     $('#admin_turnaway_button').css('background-color', '#4CAF50')
+    $('#admin_profile_button').css('background-color', '#F44336')
 
     $('#admin_customer_body').toggle(false)
     $('#admin_turnaway_body').toggle(true)
     $('#admin_timesheet_body').toggle(false)
+    $('#admin_profile_body').toggle(false)
+  })
+
+  $('#admin_profile_button').click(function(){
+    $('#admin_customer_tracking_button').css('background-color', '#F44336')
+    $('#admin_timesheet_button').css('background-color', '#F44336')
+    $('#admin_turnaway_button').css('background-color', '#F44336')
+    $('#admin_profile_button').css('background-color', '#4CAF50')
+
+    $('#admin_customer_body').toggle(false)
+    $('#admin_turnaway_body').toggle(false)
+    $('#admin_timesheet_body').toggle(false)
+    $('#admin_profile_body').toggle(true)
   })
 
   $('#by_person_timesheets').click(function(){
@@ -194,9 +213,9 @@ $(document).ready(function(){
       in_store_number=parseInt(in_store_number)+1
       saveSingleToLocalStorage(ptr_in_store_number, in_store_number)
       all_customers[getTodaysDate()][getTime()]=parseInt(all_customers[getTodaysDate()][getTime()])+1
-      var refString="customers/" + getTodaysDate() + "/" + getTime()
+      var refString=authentication.currentUser.uid +"/customers/" + getTodaysDate() + "/" + getTime()
       saveToDataBase(refString, all_customers[getTodaysDate()][getTime()])
-      refString="total/" + getTodaysDate()
+      refString=authentication.currentUser.uid +"/total/" + getTodaysDate()
       saveToDataBase(refString, getDailyTotal(getTodaysDate()))
 
       $('#in_store_number').val(in_store_number)
@@ -211,9 +230,9 @@ $(document).ready(function(){
     saveSingleToLocalStorage(ptr_in_store_number, in_store_number)
 
     all_customers[getTodaysDate()][getTime()]=all_customers[getTodaysDate()][getTime()]-1
-    var refString="customers/" + getTodaysDate() + "/" + getTime()
+    var refString=authentication.currentUser.uid +"/customers/" + getTodaysDate() + "/" + getTime()
     saveToDataBase(refString, all_customers[getTodaysDate()][getTime()])
-    refString="total/" + getTodaysDate()
+    refString=authentication.currentUser.uid +"/total/" + getTodaysDate()
     saveToDataBase(refString, getDailyTotal(getTodaysDate()))
 
     $('#in_store_number').val(in_store_number)
@@ -261,7 +280,7 @@ $(document).ready(function(){
       all_turnaways[getTodaysDate()]=[]
     }
     all_turnaways[getTodaysDate()].push(new Turnaway(name, reason))
-    var refString="turnaways/" + getTodaysDate()
+    var refString=authentication.currentUser.uid +"/turnaways/" + getTodaysDate()
     saveToDataBase(refString, all_turnaways[getTodaysDate()])
   })
 
@@ -275,7 +294,7 @@ $(document).ready(function(){
     }
     var name = $("#timesheet_name").val()
     all_timesheets[getTodaysDate()][name.toString().toUpperCase()]=new Timesheet(name)
-    var refString="timesheets/" + getTodaysDate()
+    var refString=authentication.currentUser.uid +"/timesheets/" + getTodaysDate()
     saveToDataBase(refString, all_timesheets[getTodaysDate()])
 
   })
@@ -312,7 +331,7 @@ $(document).ready(function(){
         }
 
       }
-      var refString="timesheets/"+getTodaysDate()
+      var refString=authentication.currentUser.uid +"/timesheets/"+getTodaysDate()
       saveToDataBase(refString, all_timesheets[getTodaysDate()], true)
       updateUI(false, true, false)
   })
@@ -376,7 +395,7 @@ $(document).ready(function(){
 
     for(var i = 0; i < $('#by_person_table').children().length; i++){
       var mdate = $('#name_' + i).val()
-      var refString = "timesheets/" + mdate + '/' + selected_name
+      var refString = authentication.currentUser.uid +"/timesheets/" + mdate + '/' + selected_name
       var total_time = 0
       var lunch = false
       if($('#start_'+i).val() != '00:00' && $('#end_'+i).val() != '00:00') {
@@ -396,7 +415,7 @@ $(document).ready(function(){
   $('#submit_timesheet').click(function(){
     var selected_name=getSelectedEmployee()
     var selected_date=parseDate($("#mdate").val())
-    var refString= 'timesheets/' + selected_date + '/' + selected_name
+    var refString= authentication.currentUser.uid +'/timesheets/' + selected_date + '/' + selected_name
     var data = new Timesheet(selected_name, $("#mstart").val(), $("#mbreak1out").val(), $("#mbreak1in").val(), $("#mlunchout").val(), $("#mlunchin").val(), $("#mbreak2out").val(), $("#mbreak2in").val(), $("#mend").val())
     saveToDataBase(refString, data)
   })
@@ -479,7 +498,7 @@ $(document).ready(function(){
   $('#submit_edit_customer').click(function(){
     var data = parseInt($('#edit_customer_input').val())
     var time_keys = Object.keys(all_customers[getTodaysDate()])
-    var refString = "customers/" + getTodaysDate() + "/" + time_keys[$('#select_edit_customer').val()-1]
+    var refString = authentication.currentUser.uid +"/customers/" + getTodaysDate() + "/" + time_keys[$('#select_edit_customer').val()-1]
     saveToDataBase(refString, data, true)
   })
 
@@ -625,7 +644,7 @@ $(document).ready(function(){
 
   function getDataBaseInfo(customers, timesheets, turnaways, totals){
     if(customers){
-      firebase.database().ref('customers').on('value', function(snapshot){
+      firebase.database().ref(authentication.currentUser.uid+'/customers').on('value', function(snapshot){
         //pull all customers
         all_customers=snapshot.val();
         //if there is not already tracking info for today..
@@ -636,28 +655,48 @@ $(document).ready(function(){
         }
         //on data change, write proper values to UI
         updateUI(true, false, false, false)
+        if(authentication.currentUser.uid){
+          var refString=authentication.currentUser.uid+"/customers"
+          saveToDataBase(refString, all_customers)
+        }
       })
+
+
     }
     if(timesheets){
-      firebase.database().ref('timesheets').on('value', function(snapshot){
+      firebase.database().ref(authentication.currentUser.uid+'/timesheets').on('value', function(snapshot){
         all_timesheets=snapshot.val();
         //Materialize.toast('Timesheet History Loaded!', 2000)
         updateUI(false, true, false, false)
-
+        if(authentication.currentUser.uid){
+          var refString=authentication.currentUser.uid+"/timesheets"
+          saveToDataBase(refString, all_timesheets)
+        }
       })
+
     }
     if(turnaways){
-      firebase.database().ref('turnaways').on('value', function(snapshot){
+      firebase.database().ref(authentication.currentUser.uid+'/turnaways').on('value', function(snapshot){
         all_turnaways=snapshot.val();
         //Materialize.toast('Turnaway History Loaded!', 2000)
         updateUI(false, false, true, false)
+        if(authentication.currentUser.uid){
+          var refString=authentication.currentUser.uid+"/turnaways"
+          saveToDataBase(refString, all_turnaways)
+        }
       })
+
     }
     if(totals){
-      firebase.database().ref('total').on('value', function(snapshot){
+      firebase.database().ref(authentication.currentUser.uid+'/total').on('value', function(snapshot){
         all_totals=snapshot.val()
 
         updateUI(false, false, false, true)
+        console.log(user)
+        if(authentication.currentUser.uid){
+          var refString=authentication.currentUser.uid+"/total"
+          saveToDataBase(refString, all_totals)
+        }
       })
     }
   }
@@ -1322,10 +1361,12 @@ $(document).ready(function(){
   }
 
   authentication.onAuthStateChanged(function(user){
-    var user = authentication.currentUser
+    user = authentication.currentUser
     if(user){
       $('#no_user').toggle(false)
       $('#signed_in').toggle(true)
+      
+      getDataBaseInfo(true, true, true, true)
       if(user.displayName){
         $('#welcome_text').text('Wecome, ' +user.displayName+"!")
       } else {
