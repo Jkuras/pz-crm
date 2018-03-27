@@ -651,7 +651,7 @@ $(document).ready(function(){
         if(!all_customers[getTodaysDate()]){
           //make a new tracking sheet and save it to the db
           all_customers[getTodaysDate()]=new Tracker()
-          database.ref('customers/'+getTodaysDate()).set(all_customers[getTodaysDate()])
+          database.ref(authentication.currentUser.uid+'/customers/'+getTodaysDate()).set(all_customers[getTodaysDate()])
         }
         //on data change, write proper values to UI
         updateUI(true, false, false, false)
@@ -713,7 +713,7 @@ $(document).ready(function(){
   }
 
   function saveAllToDataBase() {
-    firebase.database().ref('customers/' + getTodaysDate()).set(all_customers[getTodaysDate()]).then(function(){
+    firebase.database().ref(authentication.currentUser.uid+'/customers/' + getTodaysDate()).set(all_customers[getTodaysDate()]).then(function(){
       Materialize.toast('Customer Log Saved', 2000)
     })
     // firebase.database().ref('turnaways/' + date).set(all_turnaways[date]).then(function(){
@@ -722,7 +722,7 @@ $(document).ready(function(){
     // firebase.database().ref('timesheets/' + date).set(all_timesheets[date]).then(function(){
     //   Materialize.toast('Timesheets Saved', 2000)
     // })
-    firebase.database().ref('total/' + getTodaysDate()).set( getDailyTotal(getTodaysDate())).then(function(){
+    firebase.database().ref(authentication.currentUser.uid+'/total/' + getTodaysDate()).set( getDailyTotal(getTodaysDate())).then(function(){
       Materialize.toast('Total Count Saved', 2000)
     })
   }
@@ -1365,7 +1365,7 @@ $(document).ready(function(){
     if(user){
       $('#no_user').toggle(false)
       $('#signed_in').toggle(true)
-      
+
       getDataBaseInfo(true, true, true, true)
       if(user.displayName){
         $('#welcome_text').text('Wecome, ' +user.displayName+"!")
