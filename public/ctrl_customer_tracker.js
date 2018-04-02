@@ -2,8 +2,8 @@ $(document).ready(function(){
 
   var config = {
     apiKey: "AIzaSyC00TPfdhQDZ-lqMtgJa9g82sfLjAJ3-g8",
-    authDomain: "pz-website.firebaseapp.com",
-    databaseURL: "https://pz-website.firebaseio.com"
+    authDomain: "potzone-crm.firebaseapp.com",
+    databaseURL: "https://potzone-crm.firebaseio.com"
   };
   firebase.initializeApp(config);
   google.charts.load('current', {'packages':['corechart']})
@@ -1394,12 +1394,18 @@ $(document).ready(function(){
       var keys = Object.keys(all_customers)
       var last_week = {}
       var e = 0
-      for (var i = keys.length-7; i<keys.length; i++){
-        last_week[keys[i]]=all_customers[keys[i]]
-        e++
+      if(keys.length>7){
+        for (var i = keys.length-7; i<keys.length; i++){
+          last_week[keys[i]]=all_customers[keys[i]]
+          e++
+        }
+        drawCustomerTrackingHistoryChart(last_week)
+      } else {
+        drawCustomerTrackingHistoryChart(all_customers)
       }
 
-      drawCustomerTrackingHistoryChart(last_week)
+
+
     }
 
     if(all_turnaways && turnaways){
@@ -1455,11 +1461,16 @@ $(document).ready(function(){
       var keys = Object.keys(all_totals)
       var last_week = {}
       var e = 0
-      for (var i = keys.length-7; i<keys.length; i++){
-        last_week[keys[i]]=all_totals[keys[i]]
-        e++
+      if(keys.length>7){
+        for (var i = keys.length-7; i<keys.length; i++){
+          last_week[keys[i]]=all_totals[keys[i]]
+          e++
+        }
+        drawDailyTotalHistoryChart(last_week)
+      } else {
+        drawDailyTotalHistoryChart(all_totals)
       }
-      drawDailyTotalHistoryChart(last_week)
+
     }
   }
 
