@@ -2,8 +2,8 @@ $(document).ready(function(){
 
   var config = {
     apiKey: "AIzaSyC00TPfdhQDZ-lqMtgJa9g82sfLjAJ3-g8",
-    authDomain: "potzone-crm.firebaseapp.com",
-    databaseURL: "https://potzone-crm.firebaseio.com"
+    authDomain: "pz-website.firebaseapp.com",
+    databaseURL: "https://pz-website.firebaseio.com"
   };
   firebase.initializeApp(config);
   google.charts.load('current', {'packages':['corechart']})
@@ -646,7 +646,12 @@ $(document).ready(function(){
     if(customers){
       firebase.database().ref(authentication.currentUser.uid+'/customers').on('value', function(snapshot){
         //pull all customers
-        all_customers=snapshot.val();
+        if(!snapshot.val()){
+          all_customers={}
+        } else {
+          all_customers=snapshot.val();
+        }
+
         //if there is not already tracking info for today..
         if(!all_customers[getTodaysDate()]){
           //make a new tracking sheet and save it to the db
