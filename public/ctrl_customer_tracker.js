@@ -697,7 +697,7 @@ $(document).ready(function(){
         all_totals=snapshot.val()
 
         updateUI(false, false, false, true)
-        console.log(user)
+        //console.log(user)
         if(authentication.currentUser.uid){
           var refString=authentication.currentUser.uid+"/total"
           saveToDataBase(refString, all_totals)
