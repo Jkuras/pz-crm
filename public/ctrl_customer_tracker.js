@@ -155,8 +155,7 @@ $(document).ready(function(){
     $('#admin_timesheet_body').toggle(false)
     $('#admin_profile_body').toggle(false)
 
-    drawDailyTotalHistoryChart(all_totals)
-    drawCustomerTrackingHistoryChart(all_customers)
+    updateUI(true, true, true, true)
   })
 
   $('#admin_timesheet_button').click(function(){
@@ -778,7 +777,8 @@ $(document).ready(function(){
     var keys = Object.keys(all_totals)
     var filtered_list = {}
     var filtered_tracking={}
-    for(var i = 0; i < keys.length; i++){
+    var e = 0
+    for(var i = keys.length-1; i > 0; i--){
       if(parseWeekday(keys[i])==selected_day){
         filtered_list[keys[i]]=all_totals[keys[i]]
         filtered_tracking[keys[i]]=all_customers[keys[i]]
@@ -786,6 +786,7 @@ $(document).ready(function(){
       if(Object.keys(filtered_list).length == numDays){
         break
       }
+      e++
     }
     drawDailyTotalHistoryChart(filtered_list)
     drawCustomerTrackingHistoryChart(filtered_tracking)
@@ -798,13 +799,15 @@ $(document).ready(function(){
     var start_date=parseDate(startDay)
     var keys=Object.keys(all_totals)
     for(var i = keys.indexOf(start_date); i < keys.indexOf(start_date)+7; i++){
-      filtered_totals[keys[i]] = all_totals[keys[i]]
-      filtered_tracking[keys[i]] = all_customers[keys[i]]
+      if(all_totals[keys[i]]){
+        filtered_totals[keys[i]] = all_totals[keys[i]]
+      }
+      if(all_customers[keys[i]]){
+        filtered_tracking[keys[i]] = all_customers[keys[i]]
+      }
+
     }
-    keys = Object.keys(all_customers)
-    for(var i = keys.indexOf(start_date); i < keys.indexOf(start_date)+7; i++){
-      filtered_tracking[keys[i]] = all_customers[keys[i]]
-    }
+
     drawDailyTotalHistoryChart(filtered_totals)
     drawCustomerTrackingHistoryChart(filtered_tracking)
   }
@@ -835,6 +838,7 @@ $(document).ready(function(){
     }
     var keys = Object.keys(named_days)
     var total_keys = Object.keys(all_totals)
+    var customer_keys = Object.keys(all_customers)
     for(var i = 0; i<keys.length; i++){
       //Calculate the average of daily totals one by one
       var daily_average = 0
@@ -846,23 +850,75 @@ $(document).ready(function(){
         }
       }
       named_days[keys[i]]=daily_average/divide_by
+      divide_by = 0
+      var half_hour_keys = Object.keys(named_tracking[keys[i]])
+      //go through the list of all customer tracking objects
+      for(var x = 0; x<customer_keys.length; x++){
+        //find all the trackers that correspond to the current day (keys[i] is the current day)
+        if(parseWeekday(customer_keys[x])==keys[i]){
 
-      //Calculate the daily tracking averages
+          for (var y = 0; y < half_hour_keys.length; y++){
+            named_tracking[keys[i]][half_hour_keys[y]] = named_tracking[keys[i]][half_hour_keys[y]] + all_customers[customer_keys[x]][half_hour_keys[y]]
+          }
+          divide_by++
+        }
+      }
+      for(var l = 0; l < half_hour_keys.length; l++){
+        named_tracking[keys[i]][half_hour_keys[l]]=named_tracking[keys[i]][half_hour_keys[l]]/divide_by
+      }
+
 
     }
+    //half-hourly averages
 
+    drawCustomerTrackingHistoryChart(named_tracking)
     drawDailyTotalHistoryChart(named_days)
   }
 
   function filterTopFive(range){
-    //TODO: fuq
+    //TODO: add filters
     var top_5_totals = {}
+
     var keys = Object.keys(all_totals)
     var values = Object.values(all_totals)
     for(var i = 0; i < values.length; i++){
+      if(i<5){
+        top_5_totals[keys[i]]=values[i]
+      } else {
+        for(var e = 0; e < 5; e++){
+          var top_5_keys = Object.keys(top_5_totals)
+          if(values[i]>top_5_totals[top_5_keys[e]]){
+            //if it is greater than another total, add it in and...
 
+            top_5_totals[keys[i]]=values[i]
+
+            //remove the lowest total
+            delete top_5_totals[top_5_keys[indexOfSmallest(Object.values(top_5_totals))]]
+            break
+          }
+        }
+
+      }
     }
+    console.log(top_5_totals)
+    var top_5_keys = Object.keys(top_5_totals)
+    var top_5_tracking = {}
+    top_5_tracking[top_5_keys[0]]=all_customers[top_5_keys[0]]
+    top_5_tracking[top_5_keys[1]]=all_customers[top_5_keys[1]]
+    top_5_tracking[top_5_keys[2]]=all_customers[top_5_keys[2]]
+    top_5_tracking[top_5_keys[3]]=all_customers[top_5_keys[3]]
+    top_5_tracking[top_5_keys[4]]=all_customers[top_5_keys[4]]
 
+    drawDailyTotalHistoryChart(top_5_totals)
+    drawCustomerTrackingHistoryChart(top_5_tracking)
+  }
+
+  function indexOfSmallest(a) {
+   var lowest = 0;
+   for (var i = 1; i < a.length; i++) {
+    if (a[i] < a[lowest]) lowest = i;
+   }
+   return lowest;
   }
 
   function drawTodaysTrackingChart() {
