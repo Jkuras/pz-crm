@@ -216,9 +216,10 @@ $(document).ready(function(){
       saveToDataBase(refString, all_customers[getTodaysDate()][getTime()])
       refString=authentication.currentUser.uid +"/total/" + getTodaysDate()
       saveToDataBase(refString, getDailyTotal(getTodaysDate()))
-
+      var in_store_progress = ((in_store_number/16)*100).toString() + '%'
+      $('#in_store_progress').css('width', in_store_progress)
       $('#in_store_number').val(in_store_number)
-
+      console.log(in_store_progress)
       drawTodaysTrackingChart()
     }
 
@@ -233,9 +234,10 @@ $(document).ready(function(){
     saveToDataBase(refString, all_customers[getTodaysDate()][getTime()])
     refString=authentication.currentUser.uid +"/total/" + getTodaysDate()
     saveToDataBase(refString, getDailyTotal(getTodaysDate()))
-
+    var in_store_progress = ((in_store_number/16)*100).toString() + '%'
+    $('#in_store_progress').css('width', in_store_progress)
     $('#in_store_number').val(in_store_number)
-
+console.log(in_store_progress)
     drawTodaysTrackingChart()
   })
 
@@ -243,7 +245,10 @@ $(document).ready(function(){
 
     in_store_number=parseInt(in_store_number)-1
     saveSingleToLocalStorage(ptr_in_store_number, in_store_number)
+    var in_store_progress = ((in_store_number/16)*100).toString() + '%'
+    $('#in_store_progress').css('width', in_store_progress)
     $('#in_store_number').val(in_store_number)
+    console.log(in_store_progress)
   })
 
   $('#entering_customer').click(function(){
@@ -253,7 +258,10 @@ $(document).ready(function(){
     } else {
       in_store_number=parseInt(in_store_number)+1
       saveSingleToLocalStorage(ptr_in_store_number, in_store_number)
+      var in_store_progress = ((in_store_number/16)*100).toString() + '%'
+      $('#in_store_progress').css('width', in_store_progress)
       $('#in_store_number').val(in_store_number)
+      console.log(in_store_progress)
     }
 
   })
@@ -753,8 +761,10 @@ $(document).ready(function(){
     } else{
       in_store_number=0
     }
+    var in_store_progress = ((in_store_number/16)*100).toString() + '%'
+    $('#in_store_progress').css('width', in_store_progress)
     $('#in_store_number').val(in_store_number)
-
+console.log(in_store_progress)
   }
 
   function filterByDay(day, numDays){
