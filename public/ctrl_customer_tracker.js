@@ -78,6 +78,19 @@ $(document).ready(function(){
       '19:00':0, '19:30':0,'20:00':0, '20:30':0,'21:00':0, '21:30':0,'22:00':0, '22:30':0}
   }
 
+  function MessagePost(name, message){
+    this.name=name
+    this.message=message
+    this.date=getTodaysDate()
+  }
+
+  function QuotePost(name, context, quote, votes){
+    this.name=name
+    this.context=context
+    this.quote=quote
+    this.votes=0
+  }
+
 
   /////////////////////////////////////////////////////
   //END OBJECT SETUPS//////////////////////////////////
@@ -96,12 +109,14 @@ $(document).ready(function(){
   var ptr_in_store_number="in_store_number"
 
   var all_customers, all_timesheets, all_totals, all_turnaways;
+  var all_messages, all_quotes;
   $('#date').val(getTodaysDate())
   $('#21on_date').val(getTwentyOneOnDate())
   //getDataBaseInfo(true, true, true, true)
   loadAllFromLocalStorage()
   getClock();
   halfHourCheck();
+  getMessagesQuotes()
   setInterval(halfHourCheck, 1000);
   setInterval(getClock,1000);
 
@@ -114,12 +129,22 @@ $(document).ready(function(){
   //START ONCLICK SETUPS//////////////////////////////
   ////////////////////////////////////////////////////
 
+  $('#show_bullshit_button').click(function(){
+    $('#customer_scroll_body').toggle(false);
+    $('#turnaway_scroll_body').toggle(false);
+    $('#timesheet_body').toggle(false);
+    $('#admin_body').toggle(false);
+    $('#bullshit_scroll_body').toggle(true)
+    updateUI(true, true, true, true, true, true)
+  })
+
   $('#show_manager_button').click(function(){
     $('#customer_scroll_body').toggle(false);
     $('#turnaway_scroll_body').toggle(false);
     $('#timesheet_body').toggle(false);
     $('#admin_body').toggle(true);
-    updateUI(true, true, true, true)
+    $('#bullshit_scroll_body').toggle(false)
+    updateUI(true, true, true, true, true, true)
   })
 
   $('#show_customer_button').click(function(){
@@ -127,6 +152,8 @@ $(document).ready(function(){
     $('#turnaway_scroll_body').toggle(false);
     $('#timesheet_body').toggle(false);
     $('#admin_body').toggle(false);
+    $('#bullshit_scroll_body').toggle(false)
+    updateUI(true, true, true, true, true, true)
     drawTodaysTrackingChart()
   })
 
@@ -135,6 +162,8 @@ $(document).ready(function(){
     $('#turnaway_scroll_body').toggle(true);
     $('#timesheet_body').toggle(false);
     $('#admin_body').toggle(false);
+    $('#bullshit_scroll_body').toggle(false)
+    updateUI(true, true, true, true, true, true)
   })
 
   $('#show_timesheet_button').click(function(){
@@ -142,6 +171,8 @@ $(document).ready(function(){
     $('#turnaway_scroll_body').toggle(false);
     $('#timesheet_body').toggle(true);
     $('#admin_body').toggle(false);
+    $('#bullshit_scroll_body').toggle(false)
+    updateUI(true, true, true, true, true, true)
   })
 
   $('#admin_customer_tracking_button').click(function(){
@@ -237,7 +268,7 @@ $(document).ready(function(){
     var in_store_progress = ((in_store_number/16)*100).toString() + '%'
     $('#in_store_progress').css('width', in_store_progress)
     $('#in_store_number').val(in_store_number)
-console.log(in_store_progress)
+    console.log(in_store_progress)
     drawTodaysTrackingChart()
   })
 
@@ -623,6 +654,25 @@ console.log(in_store_progress)
     authentication.signOut()
   })
 
+  $('#submit_message').click(function(){
+    var name = $('#message_name').val()
+    var body = $('#message_body').val()
+    var id = generateCode(5, '0123456789abcdefghijklmnopqrstuvwxyz')
+    var ref = 'messages/' + id
+    var data = new MessagePost(name, body)
+    saveToDataBase(ref, data, true)
+  })
+
+  $('#submit_quote').click(function(){
+    var name = $('#quote_name').val()
+    var body = $('#quote_body').val()
+    var context = $('#quote_context').val()
+    var id = generateCode(4, '0123456789')
+    var ref = 'quotes/' + getTodaysDate() + '/' + id
+    var data = new QuotePost(name, context, body)
+    saveToDataBase(ref, data, true)
+  })
+
   ////////////////////////////////////////////////////
   //STOP ONCLICK SETUPS///////////////////////////////
   ////////////////////////////////////////////////////
@@ -631,6 +681,12 @@ console.log(in_store_progress)
   ////////////////////////////////////////////////////
   //START FUNCTION SETUPS/////////////////////////////
   ////////////////////////////////////////////////////
+  function generateCode(length, chars) {
+    var result = '';
+    for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
+    return result;
+  }
+
   function getClock(){
     var d=new Date();
     var nhour=d.getHours(),nmin=d.getMinutes();
@@ -647,6 +703,25 @@ console.log(in_store_progress)
 
   function clearStorage(){
     localStorage.clear()
+  }
+
+  function getMessagesQuotes(){
+    database.ref('messages').on('value', function(snapshot){
+      if(!snapshot.val()){
+        all_messages = {}
+      } else {
+        all_messages = snapshot.val()
+        updateUI(false, false, false, false, true, false)
+      }
+    })
+    database.ref('quotes/' + getTodaysDate()).on('value', function(snapshot){
+      if(!snapshot.val()){
+        all_quotes = {}
+      } else {
+        all_quotes = snapshot.val()
+        updateUI(false, false, false, false, false, true)
+      }
+    })
   }
 
   function getDataBaseInfo(customers, timesheets, turnaways, totals){
@@ -764,7 +839,7 @@ console.log(in_store_progress)
     var in_store_progress = ((in_store_number/16)*100).toString() + '%'
     $('#in_store_progress').css('width', in_store_progress)
     $('#in_store_number').val(in_store_number)
-console.log(in_store_progress)
+    console.log(in_store_progress)
   }
 
   function filterByDay(day, numDays){
@@ -1450,7 +1525,7 @@ console.log(in_store_progress)
     }
   })
 
-  function updateUI(customers, timesheets, turnaways, totals){
+  function updateUI(customers, timesheets, turnaways, totals, messages, quotes){
 
 
     if(all_customers && customers) {
@@ -1538,6 +1613,48 @@ console.log(in_store_progress)
       }
 
     }
+
+    if(all_messages && messages){
+      $('#message_board_table').empty()
+      var message_array = Object.values(all_messages)
+      var color = ""
+      var color_counter = 0
+      for(var i = 0; i<message_array.length; i++){
+        if(color_counter>2){color_counter=0}
+        if(color_counter==0){color="green"}
+        if(color_counter==1){color="red"}
+        if(color_counter==2){color="yellow"}
+        var string = ""
+        string = "<tr class='"+color+" lighten-3'>\
+          <td>"+message_array[i].name+"</td>\
+          <td>"+message_array[i].date+"</td>\
+          <td>"+message_array[i].message+"</td>\
+        </tr>"
+        $('#message_board_table').append(string)
+        color_counter++
+      }
+    }
+    if(all_quotes && quotes){
+      $('#quote_board_table').empty()
+      var quote_array = Object.values(all_quotes)
+      var color = ""
+      var color_counter = 0
+      for(var i = 0; i<quote_array.length; i++){
+        if(color_counter>2){color_counter=0}
+        if(color_counter==0){color="green"}
+        if(color_counter==1){color="red"}
+        if(color_counter==2){color="yellow"}
+        var string = ""
+        string = "<tr class='"+color+" lighten-3'>\
+          <td>"+quote_array[i].name+"</td>\
+          <td>"+quote_array[i].context+"</td>\
+          <td>"+quote_array[i].quote+"</td>\
+          <td>"+quote_array[i].votes+"</td>\
+        </tr>"
+        $('#quote_board_table').append(string)
+        color_counter++
+      }
+    }
   }
 
   //create trigger to resizeEnd event
@@ -1558,6 +1675,8 @@ console.log(in_store_progress)
     $('#modal2').modal();
     $('#modal3').modal();
     $('#modal4').modal();
+    $('#message_modal').modal();
+    $('#quote_modal').modal();
     $('select').material_select();
     $('.datepicker').pickadate({
       selectMonths: true, // Creates a dropdown to control month
